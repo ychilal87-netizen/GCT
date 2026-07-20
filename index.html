@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOLD CITY TRADING PLC - GCT Your choice</title>
+    
+    <!-- Tailwind CSS for Layouts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Bright Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode.js for Referral QR Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        goldPrimary: '#F2A900',
+                        goldSecondary: '#D4AF37',
+                        goldDark: '#8C6212',
+                        brightYellow: '#FFD700',
+                        amberGlow: '#FF8C00',
+                        emeraldLight: '#10B981',
+                        skyVibrant: '#06B6D4',
+                        roseVibrant: '#F43F5E',
+                        indigoBright: '#6366F1'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Strict No Black Color - Shining Golden, Pearl-White & Radiant Multi-color Theme */
+        body {
+            background: radial-gradient(circle, #FFFDF0 0%, #FEF8D3 50%, #FCE89D 100%);
+            color: #5C4008;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .gct-rainbow-glow {
+            box-shadow: 0 0 20px rgba(242, 169, 0, 0.4), 
+                        inset 0 0 15px rgba(255, 20, 147, 0.2), 
+                        0 4px 15px rgba(0, 191, 255, 0.3);
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #F2A900, #FF007F, #00F0FF, #7000FF, #FF8C00, #00FF66, #FF00FF, #00FFFF) 1;
+        }
+
+        .gold-button-gradient {
+            background: linear-gradient(135deg, #FFE066 0%, #F5B041 50%, #DC7633 100%);
+            box-shadow: 0 4px 10px rgba(220, 118, 51, 0.4);
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.7);
+        }
+
+        .gold-button-gradient:hover {
+            background: linear-gradient(135deg, #FFF099 0%, #F8C471 50%, #E59866 100%);
+            transform: scale(1.02);
+        }
+
+        .gold-card {
+            background: rgba(255, 254, 245, 0.9);
+            border: 2px solid #F5C043;
+            box-shadow: 0 8px 32px 0 rgba(245, 192, 67, 0.2);
+            backdrop-filter: blur(8px);
+            border-radius: 1.5rem;
+        }
+
+        .nav-active {
+            background: linear-gradient(135deg, #FFE885 0%, #F2A900 100%);
+            color: #4A2700 !important;
+            box-shadow: 0 3px 8px rgba(242, 169, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Wheel of Fortune Styling */
+        .wheel-container {
+            width: 280px;
+            height: 280px;
+            border: 12px solid #F5C043;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 5s cubic-bezier(0.15, 0.95, 0.3, 1);
+            background: conic-gradient(
+                #FF5733 0deg 36deg,
+                #FFC300 36deg 72deg,
+                #DAF7A6 72deg 108deg,
+                #33FF57 108deg 144deg,
+                #33FFBD 144deg 180deg,
+                #33D1FF 180deg 216deg,
+                #3357FF 216deg 252deg,
+                #9B33FF 252deg 288deg,
+                #FF33E9 288deg 324deg,
+                #FF3361 324deg 360deg
+            );
+            box-shadow: 0 0 25px #F5B041;
+        }
+
+        .wheel-pin {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 35px;
+            background: #E74C3C;
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            z-index: 40;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Architectural Building Background for Signup Form */
+        .registration-bg {
+            background-image: radial-gradient(circle, rgba(254, 249, 195, 0.92) 40%, rgba(254, 240, 138, 0.85) 100%), 
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M9 0h102v120H9V0zm12 12h12v15H21V12zm18 0h12v15H39V12zm18 0h12v15H57V12zm18 0h12v15H75V12zm18 0h12v15H93V12zm-72 24h12v15H21V36zm18 0h12v15H39V36zm18 0h12v15H57V36zm18 0h12v15H75V36zm18 0h12v15H93V36zm-72 24h12v15H21V60zm18 0h12v15H39V60zm18 0h12v15H57V60zm18 0h12v15H75V60zm18 0h12v15H93V60zm-72 24h12v15H21V84zm18 0h12v15H39V84zm18 0h12v15H57V84zm18 0h12v15H75V84zm18 0h12v15H93V84z' fill='%23f2a900' fill-opacity='0.15'/%3E%3C/svg%3E");
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="p-0 m-0 min-h-screen flex flex-col justify-between">
+
+    <!-- Welcome Splash Overlay -->
+    <div id="welcome-splash" class="fixed inset-0 z-[100] flex items-center justify-center bg-yellow-100/95 transition-all duration-700">
+        <div class="text-center p-8 max-w-sm gold-card gct-rainbow-glow animate-bounce">
+            <div class="w-24 h-24 mx-auto mb-4 bg-gradient-to-tr from-yellow-300 to-amber-500 rounded-full flex items-center justify-center text-4xl shadow-inner font-extrabold text-amber-900 border-4 border-white">GCT</div>
+            <h1 class="text-3xl font-black text-amber-955 tracking-wider">GOLD CITY</h1>
+            <p class="text-md text-amber-800 font-bold mt-2">Trading PLC</p>
+            <div class="my-4 py-2 px-4 bg-amber-200/50 rounded-full border border-amber-300">
+                <span class="text-lg font-black text-amber-955 animate-pulse">"GCT Your choice"</span>
+            </div>
+            <button onclick="dismissSplash()" class="mt-2 w-full py-3 gold-button-gradient text-amber-955 font-extrabold rounded-xl text-sm transition">እንጀምር (Enter)</button>
+        </div>
+    </div>
+
+    <!-- ================= AUTHENTICATION OVERLAY ================= -->
+    <div id="auth-container" class="fixed inset-0 z-50 flex items-center justify-center registration-bg p-4 overflow-y-auto">
+        <div class="w-full max-w-md gold-card gct-rainbow-glow p-6 md:p-8 space-y-6">
+            <div class="text-center">
+                <span class="text-xs font-black uppercase tracking-widest bg-yellow-300/60 px-3 py-1 rounded-full border border-yellow-400 text-amber-900">አባል መመዝገቢያና መግቢያ</span>
+                <h2 class="text-2xl font-black text-amber-955 mt-2">GOLD CITY TRADING</h2>
+            </div>
+
+            <!-- REGISTRATION FORM -->
+            <div id="register-box" class="space-y-4">
+                <h3 class="text-md font-bold text-amber-850 border-b border-yellow-400 pb-2">አዲስ አካውንት መመዝገቢያ</h3>
+                
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-amber-900">ሙሉ ስም (Full Name)</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-3 top-3.5 text-yellow-650 text-xs"></i>
+                        <input type="text" id="reg-fullname" placeholder="ሙሉ ስም ያስገቡ" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-yellow-400 bg-white/80 text-xs text-amber-900 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-amber-900">የስልክ ቁጥር (Phone Number)</label>
+                    <div class="flex gap-1">
+                        <span class="bg-yellow-200 border border-yellow-400 px-3 py-2 rounded-xl text-xs font-bold text-amber-900 flex items-center">+251</span>
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-phone absolute left-3 top-3.5 text-yellow-650 text-xs"></i>
+                            <input type="number" id="reg-phone" placeholder="9xxxxxxxx (9 ዲጂት ብቻ)" class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-yellow-400 bg-white/80 text-xs text-amber-900 focus:outline-none">
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-amber-700 italic">በ +251 ጀምረው 9 አሃዞችን ብቻ ያስገቡ (ለምሳሌ 912345678)</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-amber-900">የይለፍ ቃል (6 ዲጂት ቁጥር)</label>
+                        <input type="password" id="reg-pass" maxlength="6" placeholder="******" class="w-full px-3 py-2.5 rounded-xl border border-yellow-400 bg-white/80 text-xs text-center font-bold tracking-widest text-amber-900 focus:outline-none">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-amber-900">ደህንነት ፒን (4 ፊደላት)</label>
+                        <input type="text" id="reg-pin" maxlength="4" placeholder="ABCD" class="w-full px-3 py-2.5 rounded-xl border border-yellow-400 bg-white/80 text-xs text-center font-bold uppercase tracking-widest text-amber-900 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Verification Code -->
+                <div class="grid grid-cols-2 gap-3 items-end">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-amber-900">ማረጋገጫ ኮድ (Verify)</label>
+                        <input type="text" id="reg-verify-input" placeholder="ኮዱን ያስገቡ" class="w-full px-3 py-2.5 rounded-xl border border-yellow-400 bg-white/80 text-xs text-center text-amber-900 focus:outline-none">
+                    </div>
+                    <div onclick="generateVerificationCode()" class="bg-gradient-to-r from-yellow-300 to-amber-400 py-2 px-4 rounded-xl border-2 border-dashed border-amber-600 text-center cursor-pointer select-none font-black text-amber-955 tracking-wider text-sm" id="reg-verify-box">
+                        ----
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-amber-900">የግብዣ ኮድ (Invitation Code)</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-gift absolute left-3 top-3.5 text-yellow-650 text-xs"></i>
+                        <input type="text" id="reg-invite" readonly class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-yellow-400 bg-yellow-100/60 font-bold text-xs text-amber-850">
+                    </div>
+                </div>
+
+                <button onclick="handleRegister()" class="w-full py-3 mt-2 gold-button-gradient text-amber-955 font-black rounded-xl text-sm transition">አካውንት ፍጠር (Register +50 ETB)</button>
+                <p class="text-xs text-center text-amber-800 font-semibold">አካውንት አለዎት? <span onclick="toggleAuthBoxes('login')" class="text-amber-955 underline font-black cursor-pointer">እዚህ ይግቡ (Login)</span></p>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <div id="login-box" class="space-y-4 hidden">
+                <h3 class="text-md font-bold text-amber-850 border-b border-yellow-400 pb-2">ቀጥታ መግቢያ ክፍል (Login)</h3>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-amber-900">የስልክ ቁጥር (Phone)</label>
+                    <div class="flex gap-1">
+                        <span class="bg-yellow-200 border border-yellow-400 px-3 py-2 rounded-xl text-xs font-bold text-amber-900 flex items-center">+251</span>
+                        <input type="number" id="login-phone" placeholder="9xxxxxxxx" class="w-full px-3 py-2.5 rounded-xl border border-yellow-400 bg-white/80 text-xs text-amber-900 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-amber-900">የይለፍ ቃል (Password)</label>
+                    <input type="password" id="login-pass" maxlength="6" placeholder="የ 6 ዲጂት የይለፍ ቃል ያስገቡ" class="w-full px-3 py-2.5 rounded-xl border border-yellow-400 bg-white/80 text-xs text-amber-900 focus:outline-none">
+                </div>
+
+                <button onclick="handleLogin()" class="w-full py-3 gold-button-gradient text-amber-955 font-black rounded-xl text-sm transition">ግባ (Sign In)</button>
+                <p class="text-xs text-center text-amber-800 font-semibold">አዲስ ተጠቃሚ ነዎት? <span onclick="toggleAuthBoxes('register')" class="text-amber-955 underline font-black cursor-pointer">እዚህ ይመዝገቡ (Register)</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MAIN HEADER ================= -->
+    <header class="bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-300 sticky top-0 z-40 px-4 py-3 flex justify-between items-center shadow-md border-b-2 border-yellow-500">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-white to-yellow-200 flex items-center justify-center text-xl font-black text-amber-900 border-2 border-amber-600 shadow-inner">GCT</div>
+            <div>
+                <span class="font-black text-sm tracking-wider text-amber-955 block leading-tight">GOLD CITY TRADING</span>
+                <span class="text-[10px] font-bold text-amber-800">Your Choice, Secure Trading</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="text-right">
+                <p class="text-[10px] font-extrabold text-amber-900/80">የእርስዎ ባላንስ</p>
+                <p class="font-black text-md text-amber-955" id="header-balance">50.00 ETB</p>
+            </div>
+            <button onclick="syncUserData()" class="bg-yellow-200/80 p-2 rounded-xl text-amber-900 border border-yellow-400 active:scale-90 transition"><i class="fa-solid fa-rotate-right"></i></button>
+        </div>
+    </header>
+
+    <!-- ================= MAIN SCROLLABLE AREA ================= -->
+    <main class="flex-1 overflow-y-auto px-4 py-4 pb-28 max-w-lg mx-auto w-full no-scrollbar space-y-6">
+
+        <!-- =================== HOME TAB =================== -->
+        <section id="tab-home" class="tab-content space-y-6">
+            
+            <!-- Quick Download App Banner at the Top of Home Tab -->
+            <div class="gold-card p-3 flex justify-between items-center bg-gradient-to-r from-amber-100 to-yellow-200 border-2 border-yellow-400">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-yellow-300 flex items-center justify-center text-amber-955 text-xs font-black shadow"><i class="fa-solid fa-mobile-screen"></i></div>
+                    <div>
+                        <p class="text-xs font-black text-amber-955 leading-tight">GCT ሞባይል አፕሊኬሽን</p>
+                        <p class="text-[9px] text-amber-800 font-bold">አፑን ጭነው በቀላሉ ስራዎችን ያከናውኑ</p>
+                    </div>
+                </div>
+                <button onclick="downloadApp()" class="gold-button-gradient px-3 py-1.5 text-[10px] font-black text-amber-955 rounded-xl transition active:scale-95 flex items-center gap-1">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> አውርድ (App)
+                </button>
+            </div>
+            
+            <!-- 16:9 Carousel (100 Fast-Changing Images Showcase) -->
+            <div class="gold-card p-2 relative overflow-hidden gct-rainbow-glow">
+                <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-yellow-100 flex flex-col justify-between p-4 border border-yellow-300">
+                    <div id="carousel-canvas" class="absolute inset-0 flex flex-col justify-end p-4 transition-all duration-500 bg-cover bg-center" style="background-image: linear-gradient(to top, rgba(230,130,0,0.85) 0%, rgba(254,240,138,0.2) 100%), url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=480&q=80');">
+                        <div class="relative z-10 space-y-1">
+                            <span class="text-[10px] font-black uppercase tracking-widest bg-yellow-300 px-2.5 py-0.5 rounded-full text-amber-955 border border-yellow-400 inline-block">የንግድ ቁሳቁስ ስቶክ (#<span id="slide-num">1</span>)</span>
+                            <h3 class="text-sm font-black text-white drop-shadow-md" id="slide-title">የቤትና የቢሮ ዕቃዎች (Luxury Furnitures)</h3>
+                            <p class="text-[10px] text-yellow-100 font-bold" id="slide-desc">የተለያዩ ዘመናዊ የቤት እቃዎችን በቀላሉ ይሽጡ፣ ይግዙ፣ ያትርፉ!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deposit & Withdraw Fast Action Boxes -->
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="openModal('deposit-modal')" class="gold-button-gradient py-4 rounded-3xl flex flex-col items-center gap-2 border-2 border-yellow-300 text-amber-955 active:scale-95 transition">
+                    <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center text-amber-800 text-xl shadow-inner"><i class="fa-solid fa-wallet"></i></div>
+                    <span class="font-black text-xs uppercase tracking-wider">ገንዘብ አስገባ (DEPOSIT)</span>
+                </button>
+                <button onclick="openModal('withdraw-modal')" class="bg-gradient-to-br from-yellow-100 to-amber-200 py-4 rounded-3xl flex flex-col items-center gap-2 border-2 border-yellow-400 text-amber-955 active:scale-95 transition">
+                    <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center text-amber-800 text-xl shadow-inner"><i class="fa-solid fa-money-bill-transfer"></i></div>
+                    <span class="font-black text-xs uppercase tracking-wider">ገንዘብ አውጣ (WITHDRAW)</span>
+                </button>
+            </div>
+
+            <!-- Support & Community Links -->
+            <div class="grid grid-cols-2 gap-4">
+                <a href="https://t.me/TRCcustomerservice" target="_blank" class="gold-card p-3 flex items-center gap-3 hover:border-skyVibrant transition duration-300">
+                    <div class="w-10 h-10 rounded-xl bg-sky-200 flex items-center justify-center text-skyVibrant text-lg shadow-inner"><i class="fa-solid fa-headset animate-pulse"></i></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-amber-800">Support @TRC</p>
+                        <p class="text-[11px] font-black text-[#0088cc]">አገልግሎት ሰጪ <i class="fa-solid fa-up-right-from-square text-[9px]"></i></p>
+                    </div>
+                </a>
+                <a href="https://t.me/worldhealthpharmacenter" target="_blank" class="gold-card p-3 flex items-center gap-3 hover:border-[#0088cc] transition duration-300">
+                    <div class="w-10 h-10 rounded-xl bg-[#0088cc]/10 flex items-center justify-center text-[#0088cc] text-lg shadow-inner"><i class="fa-brands fa-telegram"></i></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-amber-800">GTC Community</p>
+                        <p class="text-[11px] font-black text-[#0088cc]">ቴሌግራም ቻናል <i class="fa-solid fa-up-right-from-square text-[9px]"></i></p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Lucky Wheel Section -->
+            <div class="gold-card p-5 space-y-4 gct-rainbow-glow">
+                <div class="text-center">
+                    <span class="text-[10px] bg-red-100 border border-red-300 text-red-700 font-extrabold px-3 py-1 rounded-full uppercase tracking-wider"><i class="fa-solid fa-circle-dollar-to-slot animate-pulse"></i> Lucky Wheel</span>
+                    <h3 class="text-md font-black text-amber-955 mt-1">የዕድል እሽክርክሪት (Wheel of Fortune)</h3>
+                    <p class="text-xs text-amber-850 mt-1">የ Package አባላት ብቻ የሚሳተፉበት ታላቅ ዕድል! አዲስ ሰው በጋበዙ ቁጥር የማሽከርከር እድል ያገኛሉ።</p>
+                </div>
+
+                <div class="flex flex-col items-center justify-center py-4 relative">
+                    <div class="wheel-pin"></div>
+                    <div id="wheel" class="wheel-container"></div>
+                    <button onclick="spinTheWheel()" id="spin-btn" class="absolute bg-white text-amber-955 border-4 border-yellow-500 font-black text-sm px-6 py-2.5 rounded-full shadow-xl z-10 active:scale-90 transition">አሽከርክር (SPIN)</button>
+                </div>
+
+                <div class="bg-yellow-100/50 p-3 rounded-2xl border border-yellow-300 flex justify-between items-center text-xs">
+                    <span class="font-bold text-amber-900">የእርስዎ ቀሪ የማሽከርከር እድል፦</span>
+                    <span class="font-black text-amber-955 bg-yellow-300 px-3 py-1 rounded-full" id="spin-count-display">0 ጊዜ</span>
+                </div>
+            </div>
+
+            <!-- Bonus Code Section -->
+            <div class="gold-card p-5 space-y-3">
+                <h3 class="text-xs font-black text-amber-900 flex items-center gap-2">
+                    <i class="fa-solid fa-gift text-red-500"></i> እሑድ እሑድ የሚለቀቅ የ Bonus Code
+                </h3>
+                <p class="text-[11px] text-amber-800 leading-tight">ለ Package አባላት ብቻ በሳምንት ውስጥ ቢያንስ 1 አባል ለጋበዙ መጀመሪያ ለሚቀድሙ 20 ሰዎች 50 ETB ቦነስ።</p>
+                <div class="flex gap-2">
+                    <input type="text" id="bonus-code-input" placeholder="የሳምንቱን ኮድ ያስገቡ..." class="flex-1 px-3 py-2 text-xs rounded-xl border border-yellow-400 bg-white/80 focus:outline-none">
+                    <button onclick="claimBonusCode()" class="gold-button-gradient px-4 py-2 text-xs font-black text-amber-955 rounded-xl transition">ተጠቀም</button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- =================== PACKAGE TAB =================== -->
+        <section id="tab-package" class="tab-content hidden space-y-6">
+            <div class="text-center space-y-1">
+                <span class="text-xs font-black uppercase tracking-widest bg-yellow-300/60 px-3 py-1 rounded-full text-amber-955 border border-yellow-400 inline-block">ንግድ ፓኬጆች (Packages)</span>
+                <h2 class="text-xl font-black text-amber-900">ፓኬጆችን ይግዙና በየቀኑ ትርፍ ያግኙ</h2>
+                <p class="text-xs text-amber-850">አንድ አካውንት ማስተዳደር የሚችለው 1 ፓኬጅ ብቻ ነው። ነገር ግን ፓኬጆትን በማንኛውም ሰአት ማሳደግ ይችላሉ። የአገልግሎት ጊዜ 365 ቀናት ነው።</p>
+            </div>
+
+            <div class="space-y-4" id="package-list-container">
+                <!-- Package lists generated dynamically -->
+            </div>
+        </section>
+
+        <!-- =================== TEAM TAB =================== -->
+        <section id="tab-team" class="tab-content hidden space-y-6">
+            <div class="gold-card p-5 space-y-4 gct-rainbow-glow">
+                <h3 class="text-sm font-black text-amber-955 flex items-center gap-2">
+                    <i class="fa-solid fa-share-nodes text-yellow-600"></i> የግብዣ ሊንክ እና QR Code
+                </h3>
+                <div class="flex flex-col items-center bg-white/70 p-4 rounded-2xl border border-yellow-300 space-y-3">
+                    <div id="qrcode" class="p-2 bg-white rounded-lg border border-yellow-400"></div>
+                    <div class="w-full space-y-1.5">
+                        <label class="text-[10px] font-bold text-amber-800">የግብዣ ሊንክ መቅጂያ</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="share-link-input" readonly value="" class="flex-1 px-3 py-2 bg-yellow-100/50 rounded-xl border border-yellow-400 text-xs font-semibold text-amber-900 focus:outline-none">
+                            <button onclick="copyShareLink()" class="gold-button-gradient px-4 py-2 text-xs font-black text-amber-955 rounded-xl active:scale-95 transition">ኮፒ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Commissions Dashboard -->
+            <div class="gold-card p-5 space-y-4">
+                <h3 class="text-sm font-black text-amber-955 flex items-center gap-2">
+                    <i class="fa-solid fa-coins text-amber-600 animate-bounce"></i> Team Commissions (የቡድን ገቢዎች)
+                </h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-gradient-to-tr from-yellow-100 to-yellow-200/50 p-3 rounded-2xl border border-yellow-300">
+                        <p class="text-[10px] font-extrabold text-amber-800">የተቀማጭ (Deposit) ኮሚሽን</p>
+                        <p class="text-lg font-black text-amber-955" id="team-comm-deposit">0.00 ETB</p>
+                        <p class="text-[9px] text-amber-700 mt-1">A: 8% | B: 2% | C: 1%</p>
+                    </div>
+                    <div class="bg-gradient-to-tr from-yellow-100 to-yellow-200/50 p-3 rounded-2xl border border-yellow-300">
+                        <p class="text-[10px] font-extrabold text-amber-800">የቀን ገቢ (Trading) ኮሚሽን</p>
+                        <p class="text-lg font-black text-amber-955" id="team-comm-trading">0.00 ETB</p>
+                        <p class="text-[9px] text-amber-700 mt-1">A: 2% | B: 1% | C: 0.1%</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Level Tables -->
+            <div class="gold-card p-4 space-y-3">
+                <div class="flex justify-between items-center border-b border-yellow-400 pb-2">
+                    <h3 class="text-xs font-black text-amber-955 flex items-center gap-1"><i class="fa-solid fa-users text-yellow-600"></i> የቡድን አባላት</h3>
+                    <span class="text-[10px] bg-yellow-300 text-amber-955 px-2.5 py-0.5 rounded-full font-black border border-yellow-400" id="total-team-size">0 አባላት</span>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 p-1 bg-yellow-200/60 rounded-xl text-xs font-extrabold text-center">
+                    <button onclick="switchTeamLevel('A')" id="btn-team-A" class="py-1.5 rounded-lg bg-yellow-400 text-amber-955 shadow-inner">ደረጃ A (0)</button>
+                    <button onclick="switchTeamLevel('B')" id="btn-team-B" class="py-1.5 rounded-lg text-amber-800">ደረጃ B (0)</button>
+                    <button onclick="switchTeamLevel('C')" id="btn-team-C" class="py-1.5 rounded-lg text-amber-800">ደረጃ C (0)</button>
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-yellow-300 max-h-56 no-scrollbar">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-yellow-300/50 text-amber-955 border-b border-yellow-400 font-black">
+                                <th class="p-2">የአባል ID</th>
+                                <th class="p-2">ስልክ ቁጥር</th>
+                                <th class="p-2 text-right">የምዝገባ ቀን</th>
+                            </tr>
+                        </thead>
+                        <tbody id="team-members-table" class="divide-y divide-yellow-200 text-amber-900 bg-white/40">
+                            <!-- Rows loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Salary Feature Section -->
+            <div class="gold-card p-5 space-y-4">
+                <h3 class="text-sm font-black text-amber-955 flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-check text-amber-600"></i> Salary (ቋሚ የቡድን ደመወዝ)
+                </h3>
+                <p class="text-xs text-amber-850">የተጋባዦች የተቀማጭ ደረጃዎች ሲሞሉ "Claim" ቁልፍን በመጫን ወዲያውኑ ወደ ባላንስዎ ይደምሩ።</p>
+
+                <div class="space-y-3" id="salary-cards-list">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- =================== INFORMATION TAB =================== -->
+        <section id="tab-info" class="tab-content hidden space-y-6">
+            <div class="gold-card p-5 space-y-4 gct-rainbow-glow">
+                <div class="flex justify-between items-center border-b border-yellow-400 pb-2">
+                    <h3 class="text-sm font-black text-amber-955"><i class="fa-solid fa-book-open text-yellow-600"></i> የገቢ ማግኛ ዝርዝር ሰነዶች</h3>
+                    <span class="text-xs font-black text-amber-800 bg-yellow-200 px-3 py-0.5 rounded-full border border-yellow-300" id="info-page-indicator">ገጽ 1 / 4</span>
+                </div>
+
+                <div class="bg-white/70 p-4 rounded-2xl border border-yellow-300 text-xs text-amber-900 leading-relaxed text-justify space-y-3 min-h-[220px]" id="info-text-box">
+                    <!-- Page content load -->
+                </div>
+
+                <div class="flex justify-between items-center pt-2">
+                    <button onclick="changeInfoPage(-1)" id="btn-info-prev" class="bg-yellow-200 text-amber-900 border border-yellow-400 text-xs font-black px-4 py-2 rounded-xl active:scale-95 transition disabled:opacity-40" disabled>የቀደመው ገጽ</button>
+                    <button onclick="changeInfoPage(1)" id="btn-info-next" class="gold-button-gradient text-amber-955 text-xs font-black px-4 py-2 rounded-xl active:scale-95 transition">ቀጣይ ገጽ</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================== ACCOUNT TAB =================== -->
+        <section id="tab-account" class="tab-content hidden space-y-6">
+            
+            <div class="gold-card p-5 space-y-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-yellow-300 to-amber-500 flex items-center justify-center text-3xl font-black text-amber-955 border-2 border-white shadow-md">G</div>
+                    <div>
+                        <h3 class="font-black text-md text-amber-955" id="acc-profile-name">--- ---</h3>
+                        <p class="text-xs text-amber-800 font-bold" id="acc-profile-phone">ስልክ፡ +251 900 000 000</p>
+                        <p class="text-[11px] text-yellow-600 font-black mt-0.5" id="acc-profile-id">ID: GCT-00000</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- App Configuration & Download Box inside Account Tab -->
+            <div class="gold-card p-4 space-y-4">
+                <h4 class="text-xs font-black text-amber-955 flex items-center gap-2"><i class="fa-solid fa-mobile-screen-button text-yellow-600"></i> የሞባይል አፕሊኬሽን (Download GCT App)</h4>
+                <p class="text-[11px] text-amber-800 leading-tight">የአፑን ሊንክ ማስገቢያ ኮድ እዚህ ያዘጋጁ። ማስቀመጥ እና መልሰው ማስተካከል ይችላሉ።</p>
+                <div class="flex gap-2">
+                    <input type="text" id="app-config-link" placeholder="አፕሊኬሽን ሊንክ ያስገቡ..." class="flex-1 px-3 py-2 text-xs rounded-xl border border-yellow-400 bg-white/80 focus:outline-none">
+                    <button onclick="saveAppConfigLink()" class="gold-button-gradient px-4 py-2 text-xs font-black text-amber-955 rounded-xl transition">አስቀምጥ</button>
+                </div>
+                
+                <!-- Actual Interactive Download Button -->
+                <button onclick="downloadApp()" class="w-full py-2.5 gold-button-gradient text-amber-955 font-black rounded-xl text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow">
+                    <i class="fa-solid fa-circle-down animate-bounce"></i> አፕሊኬሽኑን አውርድ (Download App)
+                </button>
+            </div>
+
+            <!-- Security forms -->
+            <div class="space-y-3">
+                <details class="group gold-card overflow-hidden">
+                    <summary class="flex justify-between items-center p-4 text-xs font-black text-amber-955 cursor-pointer select-none">
+                        <span>የመግቢያ የይለፍ ቃል ቀይር (Change Password)</span>
+                        <i class="fa-solid fa-chevron-down text-amber-700 transition group-open:rotate-180"></i>
+                    </summary>
+                    <div class="p-4 border-t border-yellow-300 space-y-3 bg-yellow-50/40">
+                        <input type="password" id="old-pass" maxlength="6" placeholder="የድሮ የይለፍ ቃል (6 ዲጂት)" class="w-full px-3 py-2 rounded-xl border border-yellow-400 text-xs bg-white/80 focus:outline-none">
+                        <input type="password" id="new-pass" maxlength="6" placeholder="አዲስ የይለፍ ቃል (6 ዲጂት)" class="w-full px-3 py-2 rounded-xl border border-yellow-400 text-xs bg-white/80 focus:outline-none">
+                        <button onclick="changePassword()" class="w-full py-2.5 gold-button-gradient text-amber-955 font-black rounded-xl text-xs transition">የይለፍ ቃል ቀይር</button>
+                    </div>
+                </details>
+
+                <details class="group gold-card overflow-hidden">
+                    <summary class="flex justify-between items-center p-4 text-xs font-black text-amber-955 cursor-pointer select-none">
+                        <span>የማውጫ ደህንነት ፒን ቀይር (Change Wallet Pin)</span>
+                        <i class="fa-solid fa-chevron-down text-amber-700 transition group-open:rotate-180"></i>
+                    </summary>
+                    <div class="p-4 border-t border-yellow-300 space-y-3 bg-yellow-50/40">
+                        <input type="text" id="old-pin" maxlength="4" placeholder="የድሮ ደህንነት ፒን (4 ፊደላት)" class="w-full px-3 py-2 rounded-xl border border-yellow-400 text-xs bg-white/80 uppercase focus:outline-none">
+                        <input type="text" id="new-pin" maxlength="4" placeholder="አዲስ ደህንነት ፒን (4 ፊደላት)" class="w-full px-3 py-2 rounded-xl border border-yellow-400 text-xs bg-white/80 uppercase focus:outline-none">
+                        <button onclick="changeWalletPin()" class="w-full py-2.5 gold-button-gradient text-amber-955 font-black rounded-xl text-xs transition">ደህንነት ፒን ቀይር</button>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="gold-card p-5 space-y-4">
+                <h3 class="text-xs font-black text-amber-955 flex items-center gap-1"><i class="fa-solid fa-list-check text-yellow-600"></i> የገቢ፣ ወጪና የኮሚሽን ታሪክ</h3>
+                
+                <div class="grid grid-cols-4 gap-1 p-1 bg-yellow-200/60 rounded-xl text-[10px] text-center font-bold text-amber-800">
+                    <button onclick="filterTransactions('all')" id="tx-btn-all" class="py-1.5 rounded-lg bg-yellow-400 text-amber-955">ሁሉም</button>
+                    <button onclick="filterTransactions('deposit')" id="tx-btn-deposit" class="py-1.5 rounded-lg">ማስገባት</button>
+                    <button onclick="filterTransactions('withdraw')" id="tx-btn-withdraw" class="py-1.5 rounded-lg">ማውጣት</button>
+                    <button onclick="filterTransactions('commission')" id="tx-btn-commission" class="py-1.5 rounded-lg">ኮሚሽን</button>
+                </div>
+
+                <div class="space-y-2 max-h-64 overflow-y-auto no-scrollbar" id="tx-history-box">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Logout Button -->
+            <button onclick="handleLogout()" class="w-full py-3.5 bg-gradient-to-r from-red-500 to-roseVibrant hover:from-red-600 text-white font-black rounded-3xl text-xs shadow-lg flex items-center justify-center gap-2 transition active:scale-[0.98]">
+                <i class="fa-solid fa-right-from-bracket"></i> ከሲስተሙ ውጣ (Logout)
+            </button>
+        </section>
+
+    </main>
+
+    <!-- Navigation bar -->
+    <nav class="gold-card fixed bottom-0 left-0 right-0 py-2.5 px-4 border-t-2 border-yellow-400 flex justify-around items-center z-40 max-w-lg mx-auto bg-yellow-50/95 rounded-t-[2rem] shadow-2xl">
+        <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-[10px] font-black uppercase tracking-wider text-amber-800 transition py-2 px-3 rounded-xl nav-active">
+            <i class="fa-solid fa-house text-sm"></i>
+            <span>HOME</span>
+        </button>
+        <button onclick="switchTab('package')" id="nav-package" class="flex flex-col items-center gap-1 text-[10px] font-black uppercase tracking-wider text-amber-800 transition py-2 px-3 rounded-xl">
+            <i class="fa-solid fa-cubes text-sm"></i>
+            <span>PACKAGE</span>
+        </button>
+        <button onclick="switchTab('team')" id="nav-team" class="flex flex-col items-center gap-1 text-[10px] font-black uppercase tracking-wider text-amber-800 transition py-2 px-3 rounded-xl">
+            <i class="fa-solid fa-users text-sm"></i>
+            <span>TEAM</span>
+        </button>
+        <button onclick="switchTab('account')" id="nav-account" class="flex flex-col items-center gap-1 text-[10px] font-black uppercase tracking-wider text-amber-800 transition py-2 px-3 rounded-xl">
+            <i class="fa-solid fa-user-gear text-sm"></i>
+            <span>ACCOUNT</span>
+        </button>
+    </nav>
+
+    <!-- ==================== DIALOG MODALS ==================== -->
+
+    <!-- DEPOSIT MODAL -->
+    <div id="deposit-modal" class="fixed inset-0 z-50 bg-yellow-100/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-md gold-card gct-rainbow-glow p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-yellow-400 pb-2">
+                <h3 class="text-sm font-black text-amber-955 flex items-center gap-2"><i class="fa-solid fa-circle-arrow-down text-emeraldLight"></i> ገንዘብ ማስተላለፊያ ዝርዝር (Deposit)</h3>
+                <button onclick="closeModal('deposit-modal')" class="text-amber-800 font-bold hover:text-red-500 text-lg">&times;</button>
+            </div>
+
+            <div class="bg-yellow-100/50 p-4 rounded-2xl border border-yellow-300 space-y-2">
+                <p class="text-xs text-amber-800 font-bold">እባክዎ ከታች በተጠቀሰው የባንክ አካውንት ገንዘቡን ያስገቡ፡</p>
+                <div class="flex justify-between items-center bg-white/80 p-2 rounded-xl border border-yellow-400">
+                    <div>
+                        <p class="text-[9px] text-amber-700 font-extrabold uppercase">ባንክ ተቀባይ</p>
+                        <p class="text-xs font-black text-amber-955">ABREHAM NIBRET</p>
+                    </div>
+                    <span class="text-[10px] font-black bg-yellow-300 px-2 py-1 rounded text-amber-955">ንግድ ባንክ (CBE)</span>
+                </div>
+                <div class="flex justify-between items-center bg-white/80 p-2 rounded-xl border border-yellow-400">
+                    <div class="flex-1">
+                        <p class="text-[9px] text-amber-700 font-extrabold uppercase">አካውንት ቁጥር</p>
+                        <input type="text" id="cbe-acc-no" value="1000585378198" readonly class="text-xs font-black text-amber-955 bg-transparent w-full focus:outline-none">
+                    </div>
+                    <button onclick="copyCbeAccNo()" class="gold-button-gradient text-amber-955 text-[10px] font-black px-3 py-1 rounded">ኮፒ</button>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <div class="space-y-1">
+                    <label class="text-xs font-black text-amber-900">የሚያስገቡትን ፓኬጅ ይምረጡ</label>
+                    <select id="deposit-pkg-select" class="w-full px-3 py-2 rounded-xl border border-yellow-400 text-xs font-bold text-amber-900 focus:outline-none bg-white">
+                        <!-- Packages loaded dynamically -->
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-black text-amber-900">የማስተላለፊያ ደረሰኝ ቁጥር (FT Reference No)</label>
+                    <input type="text" id="deposit-ft-ref" placeholder="FTxxxxxxxxx" class="w-full px-3 py-2 rounded-xl border border-yellow-400 text-xs text-amber-900 focus:outline-none bg-white">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-black text-amber-900">የክፍያ ደረሰኝ ፎቶ (Receipt Screenshot)</label>
+                    <input type="file" id="deposit-file" accept="image/*" class="w-full text-xs text-amber-800 bg-white/80 border border-yellow-400 rounded-xl p-2 focus:outline-none">
+                </div>
+
+                <button onclick="submitDeposit()" class="w-full py-3 gold-button-gradient text-amber-955 font-black rounded-xl text-xs transition">ክፍያውን አረጋግጥ (Submit Deposit)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WITHDRAW MODAL -->
+    <div id="withdraw-modal" class="fixed inset-0 z-50 bg-yellow-100/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-md gold-card gct-rainbow-glow p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-yellow-400 pb-2">
+                <h3 class="text-sm font-black text-amber-955 flex items-center gap-2"><i class="fa-solid fa-money-bill-transfer text-roseVibrant"></i> ገንዘብ ማውጫ (Withdraw)</h3>
+                <button onclick="closeModal('withdraw-modal')" class="text-amber-800 font-bold hover:text-red-500 text-lg">&times;</button>
+            </div>
+
+            <div class="bg-yellow-100/50 p-3 rounded-2xl border border-yellow-300 text-[10px] text-amber-800 leading-tight space-y-1 font-bold">
+                <p>⚠️ አነስተኛ ማውጫ፡ <strong class="text-amber-950">150 ETB</strong></p>
+                <p>⚠️ የአገልግሎት ክፍያ (Fee)፦ <strong class="text-amber-950">10%</strong></p>
+                <p>⚠️ ወጪ መውጣት የሚቻለው በቀን አንድ ጊዜ ብቻ ነው።</p>
+                <p>⚠️ <strong class="text-roseVibrant">እሁድ እሁድ ወጪ ማድረግ በጥብቅ የተከለከለ ነው!</strong></p>
+            </div>
+
+            <div class="space-y-3">
+                <div class="space-y-1">
+                    <label class="text-xs font-black text-amber-900">ሙሉ ስም (Full Name)</label>
+                    <input type="text" id="withdraw-name" placeholder="የባንክ አካውንት ሙሉ ስም" class="w-full px-3 py-2 rounded-xl border border-yellow-400 text-xs text-amber-900 focus:outline-none bg-white">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-black text-amber-900">የኢትዮጵያ ንግድ ባንክ አካውንት ቁጥር</label>
+                    <input type="text" id="withdraw-acc" placeholder="1000xxxxxxxx" class="w-full px-3 py-2 rounded-xl border border-yellow-400 text-xs text-amber-900 focus:outline-none bg-white">
+                    <div class="flex items-center gap-2 mt-1">
+                        <input type="checkbox" id="withdraw-save-info" class="rounded border-yellow-400 text-yellow-500 bg-white">
+                        <label for="withdraw-save-info" class="text-[10px] text-amber-800 font-bold cursor-pointer">ቀጣይ በቀላሉ እንዲሞላ አስቀምጥ</label>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-black text-amber-900">የማውጫ መጠን (Amount in ETB)</label>
+                    <input type="number" id="withdraw-amount" placeholder="ቢያንስ 150 ETB" class="w-full px-3 py-2 rounded-xl border border-yellow-400 text-xs text-amber-900 focus:outline-none bg-white">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-black text-amber-900">የደህንነት ፒን (Wallet Security PIN)</label>
+                    <input type="text" id="withdraw-pin" maxlength="4" placeholder="ABCD" class="w-full px-3 py-2 rounded-xl border border-yellow-400 text-xs uppercase text-center font-bold tracking-widest text-amber-900 focus:outline-none bg-white">
+                </div>
+
+                <button onclick="submitWithdraw()" class="w-full py-3 gold-button-gradient text-amber-955 font-black rounded-xl text-xs transition">ወጪ አድርግ (Request Withdrawal)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== FIREBASE INTEGRATION SCRIPT ==================== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, update, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDs857Q--fqT_YaaGSszdd3i3brcgNVTWs",
+            authDomain: "gold-city-trading-plc.firebaseapp.com",
+            projectId: "gold-city-trading-plc",
+            storageBucket: "gold-city-trading-plc.firebasestorage.app",
+            messagingSenderId: "1091628702081",
+            appId: "1:1091628702081:web:7804a38f9e967011713080",
+            measurementId: "G-1RWJYNL28N"
+        };
+
+        // Initialize Firebase SDK
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Global Variable to store the Global App Link
+        let globalAppLink = "";
+
+        // Core Configurations
+        const packages = [
+            { id: 1, name: "Package 1", price: 1000, daily: 30, locked: false, icon: "fa-couch", desc: "ዘመናዊ የቤት እቃዎች ንግድ", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=400&q=80" },
+            { id: 2, name: "Package 2", price: 2000, daily: 60, locked: false, icon: "fa-laptop", desc: "የቴክኖሎጂ እና ኮምፒውተሮች ንግድ", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=400&q=80" },
+            { id: 3, name: "Package 3", price: 4000, daily: 120, locked: false, icon: "fa-car", desc: "የመኪና መለዋወጫዎች ንግድ", image: "https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=400&q=80" },
+            { id: 4, name: "Package 4", price: 8000, daily: 240, locked: false, icon: "fa-helmet-safety", desc: "የህንጻ እና ኮንስትራክሽን ዕቃዎች", image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=400&q=80" },
+            { id: 5, name: "Package 5", price: 15000, daily: 450, locked: false, icon: "fa-shirt", desc: "አልባሳት እና የጫማ ምርቶች", image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=400&q=80" },
+            { id: 6, name: "Package 6", price: 30000, daily: 900, locked: false, icon: "fa-print", desc: "የቢሮ ቁሳቁሶች እና ማሽነሪዎች", image: "https://images.unsplash.com/photo-1537462715879-360eeb61a0bc?auto=format&fit=crop&w=400&q=80" },
+            { id: 7, name: "Package 7", price: 50000, daily: 1500, locked: true, icon: "fa-gem", desc: "የከበሩ ማዕድናት እና ወርቅ ንግድ", image: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=400&q=80" },
+            { id: 8, name: "Package 8", price: 70000, daily: 2100, locked: true, icon: "fa-solar-panel", desc: "የታዳሽ ሃይል ምርቶች", image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&w=400&q=80" },
+            { id: 9, name: "Package 9", price: 100000, daily: 3000, locked: true, icon: "fa-satellite-dish", desc: "የቴሌኮም እና ኮሙኒኬሽን መለዋወጫዎች", image: "https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?auto=format&fit=crop&w=400&q=80" },
+            { id: 10, name: "Package 10", price: 1000000, daily: 30000, locked: true, icon: "fa-anchor", desc: "የከባድ ኢንዱስትሪ ዕቃዎች ንግድ", image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=400&q=80" }
+        ];
+
+        const salariesList = [
+            { id: 1, reward: 200, req: 8000, title: "Salary Level 1", desc: "ደረጃ A, B, C ቡድኖች በአጠቃላይ 8,000 ETB ሲያስገቡ" },
+            { id: 2, reward: 1000, req: 20000, title: "Salary Level 2", desc: "ደረጃ A, B, C ቡድኖች በአጠቃላይ 20,000 ETB ሲያስገቡ" },
+            { id: 3, reward: 2000, req: 50000, title: "Salary Level 3", desc: "ደረጃ A, B, C ቡድኖች በአጠቃላይ 50,000 ETB ሲያስገቡ" },
+            { id: 4, reward: 3000, req: 500000, title: "Salary Level 4", desc: "ደረጃ A, B, C ቡድኖች በአጠቃላይ 500,000 ETB ሲያስገቡ" },
+            { id: 5, reward: 5000, req: 100000, title: "Salary Level 5 (ከተረጋገጠ በኋላ)", desc: "ደረጃ A, B, C ቡድኖች 100,000 ETB አስገብተው ሲጸድቅላቸው" },
+            { id: 6, reward: 10000, req: 300000, title: "Salary Level 6 (ከተረጋገጠ በኋላ)", desc: "ደረጃ A እና B ቡድኖች ብቻ 300,000 ETB ተቀማጭ አድርገው ሲጸድቅላቸው" }
+        ];
+
+        const documentPages = [
+            `<strong>ገጽ 1 - የገንዘብ ማስገቢያ (Deposit) እና የማግበሪያ መመሪያ</strong><br><br>
+            • ደንበኞች አካውንታቸውን ለማሳደግ በ "Home" ገጽ ስር የሚገኘውን <strong>"ገንዘብ አስገባ (DEPOSIT)"</strong> ሳጥን መጫን ይኖርባቸዋል።<br>
+            • በክፍሉ ውስጥ የሚገኘውን የባንክ አካውንት ባለቤት <strong>ABREHAM NIBRET</strong> እና የኢትዮጵያ ንግድ ባንክ (CBE) አካውንት ቁጥር <strong>1000585378198</strong> ኮፒ በማድረግ ክፍያውን ማከናወን ይችላሉ።<br>
+            • ለማንቃት የፈለጉትን የጥቅል ደረጃ (ከ Package 1 እስከ 10) መርጠው ክፍያ መፈጸም ይችላሉ።<br>
+            • ክፍያውን ከፈጸሙ በኋላ የባንክ ማስተላለፊያ ማረጋገጫ ቁጥር <strong>(FT Reference Number)</strong> እና የደረሰኝ ፎቶ <strong>(Receipt Screenshot)</strong> በትክክል ማስገባት ግዴታ ነው።<br>
+            • መረጃው ተሞልቶ ሲጠናቀቅ "Submitted" ይባላል። በ Transactions ገጽ ላይ <strong>Pending</strong> ብሎ የሚቆይ ሲሆን፣ በሌላ ውጫዊ መተግበሪያ በኩል ተረጋግጦ ሲጸድቅ <strong>Recharged</strong> ይላል፤ ባላንሱም ወዲያውኑ ወደ አካውንትዎ ይደመራል።`,
+            
+            `<strong>ገጽ 2 - የገንዘብ ማውጫ (Withdrawal) ደንቦችና መመሪያ</strong><br><br>
+            • ገንዘብ ለማውጣት በ "Home" ገጽ ስር የሚገኘውን <strong>"ገንዘብ አውጣ (WITHDRAW)"</strong> ሳጥን መጫን ይኖርባቸዋል።<br>
+            • በክፍያ ማውጫው ላይ ሙሉ ስም እና የኢትዮጵያ ንግድ ባንክ አካውንት ቁጥር መሙላትና ለቀጣይ እንዲቀመጥ (Save) ማድረግ ይችላሉ።<br>
+            • <strong>ዝቅተኛው የማውጫ መጠን 150 ETB</strong> ነው።<br>
+            • በቀን ውስጥ <strong>1 ጊዜ ብቻ</strong> ወጪ ማድረግ የሚፈቀድ ሲሆን፣ ከሚወጣው መጠን ላይ <strong>10% የአገልግሎት ክፍያ (Transaction Fee)</strong> ይቀነሳል።<br>
+            • <strong>እሑድ እሑድ ገንዘብ ማውጣት በጥብቅ የተከለከለ ነው!</strong> በሳምንቱ የስራ ቀናት ብቻ ማውጣት ይችላሉ።<br>
+            • ወጪ ጥያቄ ለመላክ በምዝገባ ወቅት የመዘገቡትን ባለ 4 ፊደላት <strong>Wallet Security PIN</strong> በትክክል ማስገባት አለብዎት።<br>
+            • ጥያቄው እንደተላከ በ "Transactions" ታሪክ ውስጥ "Pending" ብሎ የሚቆይ ሲሆን፣ ክፍያው ተረጋግጦ ሲጠናቀቅ <strong>Successful</strong> ይላል፤ ባላንሱም በቅጽበት ይቀንሳል።`,
+
+            `<strong>ገጽ 3 - የቀን ገቢ (Daily Income) እና የቡድን ኮሚሽኖች</strong><br><br>
+            <strong>1. የቀን ገቢ (Daily Package Income)፦</strong><br>
+            • Package 1 (1000 ETB) -> በቀን 30 ETB | Package 2 (2000 ETB) -> በቀን 60 ETB | Package 3 (4000 ETB) -> በቀን 120 ETB | Package 4 (8000 ETB) -> በቀን 240 ETB | Package 5 (15000 ETB) -> በቀን 450 ETB | Package 6 (30000 ETB) -> በቀን 900 ETB ትርፍ ይሰጣል።<br>
+            • Package 7፣ 8፣ 9፣ 10 ለጊዜው ዝግ (Locked) ሆነው ይቀመጣሉ።<br>
+            • በአንድ አካውንት 1 ፓኬጅ ብቻ ማስተዳደር ይቻላል፤ ነገር ግን በማንኛውም ጊዜ ጥቅልዎን ማሳደግ ይችላሉ። ጥቅል ሲያሳድጉ የቀድሞው ጥቅል ወደ "Buy" ይመለሳል። እያንዳንዱ ጥቅል ለ 365 ቀናት የሚሰራ ሲሆን በየ 24 ሰዓቱ በቀጥታ ወደ ባላንስዎ ይደመራል።<br><br>
+            <strong>2. የቡድን ኮሚሽን (Team Commissions)፦</strong><br>
+            • <strong>የተቀማጭ (Deposit) ኮሚሽን፦</strong> ደረጃ A (8%) | ደረጃ B (2%) | ደረጃ C (1%) ከተጋባዦች የተቀማጭ መጠን ላይ በቀጥታ ወደ ባላንስዎ ወዲያውኑ ይደመራል።<br>
+            • <strong>የቀን ገቢ (Daily Trading) ኮሚሽን፦</strong> ደረጃ A (2%) | ደረጃ B (1%) | ደረጃ C (0.1%) ከተጋባዦች የቀን ገቢ ትርፍ ላይ በየቀኑ በራስ-ሰር ይደመራል።<br>
+            • <strong>ቋሚ ደመወዝ (Salaries)፦</strong> የቡድን አባላት (A, B, C) በጋራ ያስገቡት የተቀማጭ ገንዘብ 8,000 (ደመወዝ 200 ETB)፣ 20,000 (ደመወዝ 1000 ETB)፣ 50,000 (ደመወዝ 2000 ETB)፣ 500,000 (ደመወዝ 3000 ETB) ሲደርስ እንዲሁም ከጸደቀላቸው በኋላ 100,000 (ደመወዝ 5000 ETB) እና ደረጃ A እና B ብቻ 300,000 ሲደርስ (ደመወዝ 10,000 ETB) "Claim" በማድረግ በቀጥታ ወደ ባላንስዎ መደመር ይችላሉ።`,
+
+            `<strong>ገጽ 4 - የዕድል እሽክርክሪት (Lucky Wheel) እና የቦነስ ኮድ ደንቦች</strong><br><br>
+            <strong>1. የዕድል እሽክርክሪት (Lucky Wheel)፦</strong><br>
+            • ይህ እድል የሚፈቀደው <strong>የ Package አባላት ለሆኑ ብቻ</strong> ነው (በ Intern ደረጃ ላይ ያሉ ተጠቃሚዎች ማሽከርከርም ሆነ ወጪ ማውጣት አይችሉም)።<br>
+            • እሽክርክሪቱ 10 የእድል ደረጃዎች አሉት። Wheel 1 (10 ETB)፣ Wheel 2 (20 ETB)፣ Wheel 3 (40 ETB) ሲሆን ከዚያ በኋላ ያሉት እስከ Wheel 10 ድረስ በየደረጃው በ 3 እጥፍ እያደጉ ይሄዳሉ።<br>
+            • አንድ የ Package አባል አዲስ ቀጥተኛ ተጋባዥ ሲጋብዝ እና ተጋባዡ ጥቅል ገዝቶ ኢንቨስት ሲያደርግ በገዛው ጥቅል መጠን የማሽከርከር እድል ያገኛል። (ለምሳሌ Package 1 ከጋበዘ Wheel 1፣ Package 2 ከጋበዘ Wheel 2 ወዘተ) እድል ያገኛል፤ አሽከርክሮ ሲጨርስ ሽልማቱ በቀጥታ ወደ ባላንስ ይደመራል።<br><br>
+            <strong>2. የሳምንቱ ቦነስ ኮድ (Bonus Code)፦</strong><br>
+            • የ Package አባላት ብቻ (Interns አይጨምርም) በሳምንት አንድ ጊዜ እሑድ እሑድ የሚለቀቀውን የ Bonus Code መጠቀም ይችላሉ።<br>
+            • ተጠቃሚ ለመሆን በሳምንቱ ውስጥ ቢያንስ <strong>1 አዲስ አባል የጋበዙ መሆን አለባቸው</strong>።<br>
+            • ኮዱ መጀመሪያ ለሚቀድሙ 20 ሰዎች ብቻ የሚሰራ ሲሆን፣ ኮዱን ሲያስገቡ <strong>50 ETB</strong> ወዲያውኑ ወደ ዋናው ባላንሳቸው ይደመርላቸዋል።`
+        ];
+
+        // Real Commercial/Trading Stock Pre-vetted high-quality Unsplash image URLs
+        const carouselItems = [
+            { id: 1, title: "የቅንጦት ሶፋዎች (Luxury Sofas)", desc: "ለዘመናዊ ሳሎን የሚሆን ውብ ሶፋ", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=480&q=80" },
+            { id: 2, title: "የቢሮ ወንበር (Ergonomic Office Chair)", desc: "እጅግ ምቹ ለቢሮ ስራዎች", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=480&q=80" },
+            { id: 3, title: "የመኪና ጎማ (Premium Car Tires)", desc: "ደህንነቱ የተረጋገጠ ጥራት ያለው ጎማ", image: "https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=480&q=80" },
+            { id: 4, title: "ስማርት ቲቪ (65-inch Smart 4K TV)", desc: "ደማቅና ጥራት ያለው ምስል", image: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=480&q=80" },
+            { id: 5, title: "ዘመናዊ የልብስ አልባሳት (Luxury Suits)", desc: "ለየት ያሉና ማራኪ ዲዛይኖች", image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=480&q=80" },
+            { id: 6, title: "የህንጻ ብረታብረት (Reinforced Steel Bars)", desc: "ለላቀና ጠንካራ ግንባታዎች", image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=480&q=80" },
+            { id: 7, title: "የወጥ ቤት ማሽነሪ (Smart Blenders)", desc: "ቀላልና ፈጣን የወጥ ቤት ስራዎች", image: "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=480&q=80" },
+            { id: 8, title: "የቆዳ ጫማዎች (Italian Leather Shoes)", desc: "ለሁሉም ምርጫ የሚስማማ ጥራት", image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=480&q=80" },
+            { id: 9, title: "ዘመናዊ ስልኮች (Latest Flagship Phones)", desc: "የላቀ የቴክኖሎጂ ውጤት", image: "https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?auto=format&fit=crop&w=480&q=80" },
+            { id: 10, title: "የቤት ጌጣጌጥ (Creative Interior Frames)", desc: "ለቤትዎ ውበት የሚጨምሩ እቃዎች", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=480&q=80" }
+        ];
+
+        for (let i = 11; i <= 100; i++) {
+            const randomIndex = (i % 10);
+            carouselItems.push({
+                id: i,
+                title: carouselItems[randomIndex].title + ` [ስቶክ #${i}]`,
+                desc: carouselItems[randomIndex].desc,
+                image: carouselItems[randomIndex].image
+            });
+        }
+
+        // Global States
+        let currentPhone = "";
+        let userData = {};
+        let activeTeamLevel = 'A';
+        let currentInfoPage = 1;
+        let currentTxFilter = 'all';
+        let currentCarouselIndex = 0;
+        let currentGeneratedVerifyCode = "";
+
+        // On Load Init
+        window.addEventListener('DOMContentLoaded', () => {
+            const depositSelector = document.getElementById('deposit-pkg-select');
+            packages.forEach(p => {
+                depositSelector.innerHTML += `<option value="${p.id}">${p.name} - ${p.price} ETB (Daily ${p.daily} ETB)</option>`;
+            });
+
+            startCarousel();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const refParam = urlParams.get('ref');
+            if (refParam) {
+                document.getElementById('reg-invite').value = refParam;
+            } else {
+                document.getElementById('reg-invite').value = "GCT" + Math.floor(10 + Math.random() * 90);
+            }
+
+            generateVerificationCode();
+
+            const savedSession = localStorage.getItem('gct_session_phone');
+            if (savedSession) {
+                currentPhone = savedSession;
+                connectRealtimeDb(currentPhone);
+                document.getElementById('auth-container').classList.add('hidden');
+            }
+        });
+
+        // Verification Generators
+        window.generateVerificationCode = function() {
+            currentGeneratedVerifyCode = Math.floor(1000 + Math.random() * 9000).toString();
+            document.getElementById('reg-verify-box').innerText = currentGeneratedVerifyCode;
+        };
+
+        // Carousel Slider Loops with Real Trade Goods
+        function startCarousel() {
+            setInterval(() => {
+                currentCarouselIndex = (currentCarouselIndex + 1) % carouselItems.length;
+                const item = carouselItems[currentCarouselIndex];
+                
+                document.getElementById('slide-num').innerText = item.id;
+                document.getElementById('slide-title').innerText = item.title;
+                document.getElementById('slide-desc').innerText = item.desc;
+                
+                // Load Real Trade Good Image
+                document.getElementById('carousel-canvas').style.backgroundImage = `linear-gradient(to top, rgba(230,130,0,0.85) 0%, rgba(254,240,138,0.2) 100%), url('${item.image}')`;
+            }, 1000);
+        }
+
+        // Toggle boxes
+        window.toggleAuthBoxes = function(target) {
+            if (target === 'login') {
+                document.getElementById('register-box').classList.add('hidden');
+                document.getElementById('login-box').classList.remove('hidden');
+            } else {
+                document.getElementById('register-box').classList.remove('hidden');
+                document.getElementById('login-box').classList.add('hidden');
+            }
+        };
+
+        // Reg constraints
+        function validatePhone(phone) {
+            const re = /^9\d{8}$/; // Exact 9 digits starting with 9
+            return re.test(phone);
+        }
+
+        function validatePassword(pass) {
+            const re = /^\d{6}$/; // Exact 6 numeric digits
+            return re.test(pass);
+        }
+
+        function validatePin(pin) {
+            const re = /^[A-Za-z]{4}$/; // Exact 4 letters
+            return re.test(pin);
+        }
+
+        // Handle Account Registration
+        window.handleRegister = async function() {
+            const fullName = document.getElementById('reg-fullname').value.trim();
+            const phoneVal = document.getElementById('reg-phone').value.trim();
+            const passVal = document.getElementById('reg-pass').value.trim();
+            const pinVal = document.getElementById('reg-pin').value.trim().toUpperCase();
+            const verifyVal = document.getElementById('reg-verify-input').value.trim();
+            const inviteVal = document.getElementById('reg-invite').value.trim();
+
+            if (!fullName || !phoneVal || !passVal || !pinVal || !verifyVal) {
+                alert("እባክዎ ሁሉንም የመመዝገቢያ ሳጥኖች ይሙሉ!");
+                return;
+            }
+
+            if (!validatePhone(phoneVal)) {
+                alert("ስህተት፡ የስልክ ቁጥር +251 9 ጀምሮ 9 ዲጂት መሆን አለበት (ለምሳሌ፡ 912345678)!");
+                return;
+            }
+
+            if (!validatePassword(passVal)) {
+                alert("ስህተት፡ የይለፍ ቃል በትክክል 6 የቁጥር አሃዞች መሆን አለበት!");
+                return;
+            }
+
+            if (!validatePin(pinVal)) {
+                alert("ስህተት፡ የደህንነት ፒን በትክክል 4 ፊደላት መሆን አለበት!");
+                return;
+            }
+
+            if (verifyVal !== currentGeneratedVerifyCode) {
+                alert("የማረጋገጫ ኮዱ አልተዛመደም! እባክዎ እንደገና ይሞክሩ።");
+                generateVerificationCode();
+                return;
+            }
+
+            const userPhoneKey = "+251" + phoneVal;
+            const userRef = ref(db, `users/${userPhoneKey}`);
+
+            try {
+                const snapshot = await get(userRef);
+                if (snapshot.exists()) {
+                    alert("ይህ ስልክ ቁጥር ቀድሞ የተመዘገበ ነው። እባክዎ በቀጥታ ይግቡ!");
+                    toggleAuthBoxes('login');
+                    document.getElementById('login-phone').value = phoneVal;
+                    return;
+                }
+
+                const newId = "GCT-" + Math.floor(10000 + Math.random() * 90000);
+                const newUser = {
+                    fullName: fullName,
+                    phone: userPhoneKey,
+                    password: passVal,
+                    withdrawPasskey: pinVal,
+                    balance: 50.00, // 50 ETB Register Bonus
+                    id: newId,
+                    appLink: "",
+                    referredBy: inviteVal,
+                    activePackageId: 0, // Intern Default
+                    packagePurchasedDate: "",
+                    lastYieldPayoutDate: "",
+                    spinAttempts: 0,
+                    invitedCount: 0,
+                    salariesClaimed: {
+                        salary1: false,
+                        salary2: false,
+                        salary3: false,
+                        salary4: false,
+                        salary5: false,
+                        salary6: false
+                    }
+                };
+
+                await set(userRef, newUser);
+
+                if (inviteVal) {
+                    await handleInviterRelations(userPhoneKey, newId, inviteVal);
+                }
+
+                alert(`ምዝገባዎ በተሳካ ሁኔታ ተጠናቋል። 50 ETB የጉርሻ ቦነስ ወደ አካውንትዎ ተጨምሯል!`);
+                toggleAuthBoxes('login');
+                document.getElementById('login-phone').value = phoneVal;
+
+            } catch (err) {
+                console.error(err);
+                alert("በምዝገባ ወቅት ስህተት ተከስቷል!");
+            }
+        };
+
+        // Establish tree relations in Firebase
+        async function handleInviterRelations(childPhone, childId, inviterId) {
+            const usersRef = ref(db, 'users');
+            const usersSnapshot = await get(usersRef);
+            if (usersSnapshot.exists()) {
+                const usersList = usersSnapshot.val();
+                let parentUser = null;
+                let parentPhone = null;
+
+                for (let ph in usersList) {
+                    if (usersList[ph].id === inviterId) {
+                        parentUser = usersList[ph];
+                        parentPhone = ph;
+                        break;
+                    }
+                }
+
+                if (parentUser && parentPhone) {
+                    const updatedCount = (parentUser.invitedCount || 0) + 1;
+                    await update(ref(db, `users/${parentPhone}`), { invitedCount: updatedCount });
+
+                    const regDate = new Date().toISOString().split('T')[0];
+                    await set(ref(db, `team/${parentPhone}/${childPhone}`), {
+                        id: childId,
+                        phone: childPhone,
+                        level: 'A',
+                        regDate: regDate,
+                        depositAmt: 0
+                    });
+
+                    if (parentUser.referredBy) {
+                        let grandParentPhone = null;
+                        let grandParent = null;
+                        for (let ph in usersList) {
+                            if (usersList[ph].id === parentUser.referredBy) {
+                                grandParentPhone = ph;
+                                grandParent = usersList[ph];
+                                break;
+                            }
+                        }
+
+                        if (grandParentPhone) {
+                            await set(ref(db, `team/${grandParentPhone}/${childPhone}`), {
+                                id: childId,
+                                phone: childPhone,
+                                level: 'B',
+                                regDate: regDate,
+                                depositAmt: 0
+                            });
+
+                            if (grandParent.referredBy) {
+                                let greatGrandParentPhone = null;
+                                for (let ph in usersList) {
+                                    if (usersList[ph].id === grandParent.referredBy) {
+                                        greatGrandParentPhone = ph;
+                                        break;
+                                    }
+                                }
+
+                                if (greatGrandParentPhone) {
+                                    await set(ref(db, `team/${greatGrandParentPhone}/${childPhone}`), {
+                                        id: childId,
+                                        phone: childPhone,
+                                        level: 'C',
+                                        regDate: regDate,
+                                        depositAmt: 0
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Handle Account Login
+        window.handleLogin = async function() {
+            const phoneVal = document.getElementById('login-phone').value.trim();
+            const passVal = document.getElementById('login-pass').value.trim();
+
+            if (!phoneVal || !passVal) {
+                alert("እባክዎ ሁሉንም የመግቢያ ሳጥኖች ይሙሉ!");
+                return;
+            }
+
+            const formattedPhone = "+251" + phoneVal;
+            const userRef = ref(db, `users/${formattedPhone}`);
+
+            try {
+                const snapshot = await get(userRef);
+                if (!snapshot.exists()) {
+                    alert("ስህተት፡ ይህ የስልክ ቁጥር በሲስተሙ አልተመዘገበም!");
+                    return;
+                }
+
+                const dbUser = snapshot.val();
+                if (dbUser.password !== passVal) {
+                    alert("ስህተት፡ ያስገቡት የይለፍ ቃል ትክክል አይደለም!");
+                    return;
+                }
+
+                currentPhone = formattedPhone;
+                localStorage.setItem('gct_session_phone', currentPhone);
+                connectRealtimeDb(currentPhone);
+                document.getElementById('auth-container').classList.add('hidden');
+                alert("መልካም፣ ወደ GOLD CITY TRADING PLC በተሳካ ሁኔታ ገብተዋል!");
+
+            } catch (err) {
+                console.error(err);
+                alert("በመግባት ላይ ሳለ ስህተት ገጥሟል!");
+            }
+        };
+
+        // Realtime sync loops
+        function connectRealtimeDb(phoneKey) {
+            const userRef = ref(db, `users/${phoneKey}`);
+            onValue(userRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    userData = snapshot.val();
+                    renderApplicationView();
+                    checkAndProcessAutoYield(); // Automated daily yield accumulator trigger
+                }
+            });
+
+            // Listen to Global App Configuration Download Link
+            const globalAppRef = ref(db, `appConfig/downloadLink`);
+            onValue(globalAppRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    globalAppLink = snapshot.val();
+                    document.getElementById('app-config-link').value = globalAppLink;
+                }
+            });
+
+            const shareLink = `https://gold-city-trading-plc.web.app/register?ref=${userData.id || ""}`;
+            document.getElementById('share-link-input').value = shareLink;
+            generateQR(shareLink);
+        }
+
+        // Automated background yield processor (Runs on app refresh/open)
+        async function checkAndProcessAutoYield() {
+            if (!userData || !userData.activePackageId || userData.activePackageId === 0) return;
+
+            // Payout occurs based on last payout date or package purchase date
+            const lastPayoutStr = userData.lastYieldPayoutDate || userData.packagePurchasedDate;
+            if (!lastPayoutStr) return;
+
+            const lastPayout = new Date(lastPayoutStr);
+            const now = new Date();
+
+            // Calculate diff days
+            const diffTime = Math.abs(now - lastPayout);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays >= 1) {
+                const activePkg = packages.find(p => p.id === userData.activePackageId);
+                if (!activePkg) return;
+
+                const totalYield = activePkg.daily * diffDays;
+                const newBalance = parseFloat(userData.balance || 0) + totalYield;
+                const todayDateStr = now.toISOString().split('T')[0];
+
+                try {
+                    // Update main balance & payout date inside database
+                    await update(ref(db, `users/${currentPhone}`), {
+                        balance: newBalance,
+                        lastYieldPayoutDate: todayDateStr
+                    });
+
+                    // Append Transaction logs
+                    const txRef = ref(db, `transactions/${currentPhone}`);
+                    for (let i = 0; i < diffDays; i++) {
+                        const payoutLogDateStr = new Date(lastPayout.getTime() + (i + 1) * 24 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19);
+                        await push(txRef, {
+                            type: 'commission',
+                            amount: activePkg.daily,
+                            date: payoutLogDateStr,
+                            status: 'approved',
+                            remark: `የ Package ${userData.activePackageId} ዕለታዊ ገቢ (Auto Yield Payout)`
+                        });
+                    }
+
+                    alert(`እንኳን ደስ አሎት! የ ${diffDays} ቀናት የጥቅል የቀን ገቢ ${totalYield} ETB በራስ-ሰር ታስቦ ወደ ባላንስዎ ተደምሯል።`);
+                } catch (err) {
+                    console.error("Auto-yield payout process failed", err);
+                }
+            }
+        }
+
+        // Dynamic QR Generation
+        function generateQR(link) {
+            const container = document.getElementById('qrcode');
+            container.innerHTML = "";
+            new QRCode(container, {
+                text: link,
+                width: 120,
+                height: 120,
+                colorDark : "#5C4008",
+                colorLight : "#FFFDF0"
+            });
+        }
+
+        // Application Render controllers
+        function renderApplicationView() {
+            if (!userData) return;
+
+            const formattedBalance = parseFloat(userData.balance || 0).toFixed(2);
+            document.getElementById('header-balance').innerText = `${formattedBalance} ETB`;
+            document.getElementById('acc-profile-name').innerText = userData.fullName || "--- ---";
+            document.getElementById('acc-profile-phone').innerText = `ስልክ፡ ${userData.phone}`;
+            document.getElementById('acc-profile-id').innerText = `ID: ${userData.id || "GCT-xxxxx"}`;
+            document.getElementById('spin-count-display').innerText = `${userData.spinAttempts || 0} ጊዜ`;
+
+            renderPackagesTab();
+            renderTeamTab();
+            renderInfoTab();
+            renderTransactionsList();
+        }
+
+        window.syncUserData = function() {
+            if (!currentPhone) return;
+            alert("የሲስተም መረጃዎች በሪል ታይም ታድሰዋል!");
+            connectRealtimeDb(currentPhone);
+        };
+
+        // Modal triggers
+        window.openModal = function(id) {
+            document.getElementById(id).classList.remove('hidden');
+            if (id === 'withdraw-modal' && userData.activePackageId === 0) {
+                alert("ማስጠንቀቂያ፦ ወጪ ለማውጣት መጀመሪያ ንቁ ፓኬጅ (Package 1 እና በላይ) ባለቤት መሆን አለብዎት! በአሁን ሰዓት በእርስዎ በኩል ንቁ ኢንቨስትመንት የለም።");
+            }
+        };
+
+        window.closeModal = function(id) {
+            document.getElementById(id).classList.add('hidden');
+        };
+
+        window.copyCbeAccNo = function() {
+            const input = document.getElementById('cbe-acc-no');
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            alert("የንግድ ባንክ አካውንት ቁጥር ተገልብጧል!");
+        };
+
+        // Handle Deposit submissions
+        window.submitDeposit = async function() {
+            const pkgId = parseInt(document.getElementById('deposit-pkg-select').value);
+            const ftRef = document.getElementById('deposit-ft-ref').value.trim();
+            const receiptFile = document.getElementById('deposit-file').value;
+
+            if (!ftRef) {
+                alert("እባክዎ የ FT ማስተላለፊያ ደረሰኝ ቁጥር ያስገቡ!");
+                return;
+            }
+
+            const targetPkg = packages.find(p => p.id === pkgId);
+            const txRef = ref(db, `transactions/${currentPhone}`);
+
+            const newTx = {
+                type: 'deposit',
+                amount: targetPkg.price,
+                packageId: pkgId,
+                date: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                status: 'pending',
+                remark: `FT: ${ftRef}`,
+                ftRef: ftRef
+            };
+
+            try {
+                await push(txRef, newTx);
+                alert("Submitted! ክፍያዎ ተመዝግቧል። በባለሙያ ተረጋግጦ በቅርቡ ወደ አካውንትዎ ይደመራል።");
+                closeModal('deposit-modal');
+                document.getElementById('deposit-ft-ref').value = "";
+                document.getElementById('deposit-file').value = "";
+            } catch (err) {
+                console.error(err);
+                alert("ማስገባት አልተቻለም።");
+            }
+        };
+
+        // Handle Withdraw submissions with strict Sunday verification blocks
+        window.submitWithdraw = async function() {
+            const name = document.getElementById('withdraw-name').value.trim();
+            const accNo = document.getElementById('withdraw-acc').value.trim();
+            const amount = parseFloat(document.getElementById('withdraw-amount').value);
+            const pin = document.getElementById('withdraw-pin').value.trim().toUpperCase();
+
+            const dayOfWeek = new Date().getDay();
+            if (dayOfWeek === 0) {
+                alert("ስህተት፡ እሁድ እሁድ የክፍያ ማውጫ አገልግሎት በጥብቅ የተከለከለ ነው!");
+                return;
+            }
+
+            if (!userData.activePackageId || userData.activePackageId === 0) {
+                alert("ስህተት፡ ወጪ ለማውጣት ቢያንስ Package 1 እና ከዚያ በላይ የሆኑ የፓኬጅ ደንበኞች አባል መሆን አለብዎት!");
+                return;
+            }
+
+            if (!name || !accNo || isNaN(amount) || !pin) {
+                alert("እባክዎ ሁሉንም ሳጥኖች ይሙሉ!");
+                return;
+            }
+
+            if (amount < 150) {
+                alert("ስህተት፡ ዝቅተኛው የማውጫ መጠን 150 ETB ነው!");
+                return;
+            }
+
+            if (amount > userData.balance) {
+                alert("ስህተት፡ በቂ ቀሪ ሂሳብ የለዎትም!");
+                return;
+            }
+
+            if (pin !== userData.withdrawPasskey) {
+                alert("ስህተት፡ ያስገቡት የማውጫ ደህንነት ፒን (Security PIN) የተሳሳተ ነው!");
+                return;
+            }
+
+            if (document.getElementById('withdraw-save-info').checked) {
+                localStorage.setItem('gct_saved_withdraw_name', name);
+                localStorage.setItem('gct_saved_withdraw_acc', accNo);
+            }
+
+            const fee = amount * 0.10;
+            const netAmount = amount - fee;
+
+            const txRef = ref(db, `transactions/${currentPhone}`);
+            const newTx = {
+                type: 'withdraw',
+                amount: amount,
+                fee: fee,
+                net: netAmount,
+                date: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                status: 'pending',
+                remark: `ንግድ ባንክ (${accNo}) - ${name}`
+            };
+
+            try {
+                const remainingBal = userData.balance - amount;
+                await update(ref(db, `users/${currentPhone}`), { balance: remainingBal });
+
+                await push(txRef, newTx);
+                alert(`የወጪ ጥያቄዎ በተሳካ ሁኔታ ተልኳል። 10% ፌ ተቀንሶ ${netAmount.toFixed(2)} ETB በባንክዎ ይላካል።`);
+                closeModal('withdraw-modal');
+                document.getElementById('withdraw-amount').value = "";
+                document.getElementById('withdraw-pin').value = "";
+            } catch (err) {
+                alert("ሂደቱ አልተሳካም።");
+            }
+        };
+
+        // Sunday code claim constraints
+        window.claimBonusCode = async function() {
+            const code = document.getElementById('bonus-code-input').value.trim();
+            if (!code) {
+                alert("እባክዎ ኮዱን ያስገቡ!");
+                return;
+            }
+
+            const today = new Date();
+            if (today.getDay() !== 0) {
+                alert("ይህ ኮድ የሚሰራው እሁድ እሁድ ብቻ ነው!");
+                return;
+            }
+
+            if (userData.activePackageId === 0) {
+                alert("እርስዎ የ Intern አባል በመሆንዎ ምክንያት ይህ ቦነስ አይፈቀድልዎትም። የ Package አባል መሆን አለብዎት!");
+                return;
+            }
+
+            if ((userData.invitedCount || 0) < 1) {
+                alert("በዚህ ሳምንት ውስጥ ቢያንስ አንድ አዲስ አባል ስላልጋበዙ እድሉ አልተፈቀደልዎትም!");
+                return;
+            }
+
+            try {
+                const currentBal = parseFloat(userData.balance || 0);
+                await update(ref(db, `users/${currentPhone}`), { balance: currentBal + 50.00 });
+
+                const txRef = ref(db, `transactions/${currentPhone}`);
+                await push(txRef, {
+                    type: 'commission',
+                    amount: 50.00,
+                    date: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                    status: 'approved',
+                    remark: `እሁድ የኮድ ቦነስ (Bonus code claim)`
+                });
+
+                alert("እንኳን ደስ አሎት! የ 50 ETB እሁድ ቦነስ ወደ ሂሳብዎ ተደምሯል።");
+                document.getElementById('bonus-code-input').value = "";
+            } catch (err) {
+                alert("ስህተት ተከስቷል።");
+            }
+        };
+
+        // Wheel elements spinner logic
+        window.spinTheWheel = async function() {
+            if (userData.activePackageId === 0) {
+                alert("ስህተት፡ የዕድል እሽክርክሪት ለመጠቀም ቢያንስ Package 1 እና ከዚያ በላይ ደረጃ ሊኖርዎት ይገባል!");
+                return;
+            }
+
+            const spins = userData.spinAttempts || 0;
+            if (spins < 1) {
+                alert("ማስጠንቀቂያ፦ በእርስዎ ሂሳብ ላይ ቀሪ የማሽከርከር እድል የለም! አዲስ አባላትን በመጋበዝ እድል ያግኙ።");
+                return;
+            }
+
+            const spinBtn = document.getElementById('spin-btn');
+            const wheel = document.getElementById('wheel');
+            spinBtn.disabled = true;
+
+            const rewards = [10, 20, 40, 120, 360, 1080, 3240, 9720, 29160, 87480];
+            const resultIndex = Math.floor(Math.random() * 10);
+            const prizeAmount = rewards[resultIndex];
+
+            const degreesPerSegment = 36;
+            const extraDegrees = 3600; 
+            const stopAngle = extraDegrees + (resultIndex * degreesPerSegment) + (degreesPerSegment / 2);
+
+            wheel.style.transform = `rotate(${stopAngle}deg)`;
+
+            setTimeout(async () => {
+                spinBtn.disabled = false;
+                const updatedBal = parseFloat(userData.balance || 0) + prizeAmount;
+                const updatedSpins = spins - 1;
+
+                await update(ref(db, `users/${currentPhone}`), {
+                    balance: updatedBal,
+                    spinAttempts: updatedSpins
+                });
+
+                const txRef = ref(db, `transactions/${currentPhone}`);
+                await push(txRef, {
+                    type: 'commission',
+                    amount: prizeAmount,
+                    date: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                    status: 'approved',
+                    remark: `Lucky Wheel ${resultIndex + 1} Reward`
+                });
+
+                alert(`ዕድለኛ ነዎት! የ Wheel ${resultIndex + 1} ሽልማት ${prizeAmount} ETB አሸንፈው ወደ ባላንስዎ ተጨምሯል።`);
+                wheel.style.transition = 'none';
+                wheel.style.transform = `rotate(${stopAngle % 360}deg)`;
+                setTimeout(() => { wheel.style.transition = 'transform 5s cubic-bezier(0.15, 0.95, 0.3, 1)'; }, 100);
+
+            }, 5000);
+        };
+
+        // Package render mappings
+        function renderPackagesTab() {
+            const container = document.getElementById('package-list-container');
+            container.innerHTML = "";
+
+            packages.forEach(pkg => {
+                const isActive = userData.activePackageId === pkg.id;
+                let cardStatusBadge = "";
+                let actionBtnMarkup = "";
+
+                if (pkg.locked) {
+                    cardStatusBadge = `<span class="bg-red-100 border border-red-300 text-red-700 text-[10px] font-black px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-lock"></i> Locked (ዝግ)</span>`;
+                    actionBtnMarkup = `<button disabled class="w-full py-2 bg-gray-200 text-gray-400 font-bold rounded-xl text-xs cursor-not-allowed border border-gray-300">በቅርቡ ይከፈታል</button>`;
+                } else if (isActive) {
+                    cardStatusBadge = `<span class="bg-emerald-100 border border-emerald-300 text-emerald-800 text-[10px] font-black px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-check"></i> Invested</span>`;
+                    actionBtnMarkup = `<button disabled class="w-full py-2 bg-emerald-500 text-white font-extrabold rounded-xl text-xs border border-emerald-600">ገቢ ላይ ነዎት</button>`;
+                } else {
+                    cardStatusBadge = `<span class="bg-yellow-200 border border-yellow-400 text-amber-955 text-[10px] font-black px-2.5 py-0.5 rounded-full">ለመዋዕለ ንዋይ የተዘጋጀ</span>`;
+                    actionBtnMarkup = `<button onclick="investInPackage(${pkg.id}, ${pkg.price})" class="w-full py-2 gold-button-gradient text-amber-955 font-black rounded-xl text-xs transition active:scale-95">ይግዙ (Invest Now)</button>`;
+                }
+
+                container.innerHTML += `
+                    <div class="gold-card p-4 space-y-4">
+                        <div class="flex gap-4 items-center">
+                            <!-- Real Trade Good Displayed Exactly as Requested -->
+                            <div class="w-20 h-16 rounded-xl bg-yellow-100 border border-yellow-300 flex items-center justify-center overflow-hidden shadow-inner">
+                                <img src="${pkg.image}" alt="${pkg.name}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-extrabold text-sm text-amber-955">${pkg.name}</h3>
+                                    ${cardStatusBadge}
+                                </div>
+                                <p class="text-[11px] text-amber-800 mt-1">${pkg.desc}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 bg-yellow-50/50 p-3 rounded-2xl border border-yellow-200 text-xs">
+                            <div>
+                                <p class="text-[9px] text-amber-700 font-bold">የሚያስፈልገው መዋዕለ ንዋይ</p>
+                                <p class="font-black text-amber-955">${pkg.price} ETB</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] text-amber-700 font-bold">ዕለታዊ ትርፍ (Daily Income)</p>
+                                <p class="font-black text-amber-955">${pkg.daily} ETB / ቀን</p>
+                            </div>
+                        </div>
+
+                        ${actionBtnMarkup}
+                    </div>
+                `;
+            });
+        }
+
+        // Action Package investment updates
+        window.investInPackage = async function(pkgId, price) {
+            if (userData.balance < price) {
+                alert(`ስህተት፡ ይህንን ጥቅል ለመግዛት በቂ ገንዘብ የለዎትም! እባክዎ መጀመሪያ ቢያንስ ${price} ETB ያስገቡ (Deposit ያድርጉ)።`);
+                return;
+            }
+
+            if (confirm(`ይህንን ጥቅል ለመግዛት ${price} ETB ከሂሳብዎ ይቀነሳል። እርግጠኛ ነዎት?`)) {
+                try {
+                    const remainingBalance = userData.balance - price;
+                    const dateStr = new Date().toISOString().split('T')[0];
+
+                    await update(ref(db, `users/${currentPhone}`), {
+                        balance: remainingBalance,
+                        activePackageId: pkgId,
+                        packagePurchasedDate: dateStr,
+                        lastYieldPayoutDate: dateStr // Reset yield payout calendar on purchase
+                    });
+
+                    const txRef = ref(db, `transactions/${currentPhone}`);
+                    await push(txRef, {
+                        type: 'withdraw',
+                        amount: price,
+                        date: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                        status: 'approved',
+                        remark: `የተገዛ ጥቅል: Package ${pkgId} Investment`
+                    });
+
+                    alert(`እንኳን ደስ አሎት! Package ${pkgId} በተሳካ ሁኔታ ተገዝቷል። ዕለታዊ ትርፍዎ በየ 24 ሰዓቱ ወደ ባላንስዎ በራስ-ሰር ይደመራል!`);
+                } catch (err) {
+                    alert("ግዢው አልተሳካም።");
+                }
+            }
+        };
+
+        // Render dynamic Level structural lists
+        function renderTeamTab() {
+            const teamRef = ref(db, `team/${currentPhone}`);
+            get(teamRef).then((snapshot) => {
+                const teamData = snapshot.val() || {};
+                
+                let countA = 0, countB = 0, countC = 0;
+                let listA = [], listB = [], listC = [];
+                let totalGroupDeposits = 0;
+                let totalABDeposits = 0;
+
+                Object.values(teamData).forEach(member => {
+                    const rawPhone = member.phone || "";
+                    const maskedPhone = rawPhone.length > 8 ? rawPhone.slice(0, 4) + "****" + rawPhone.slice(-3) : rawPhone;
+                    const cleanMember = { id: member.id, phone: maskedPhone, date: member.regDate, level: member.level };
+
+                    if (member.level === 'A') {
+                        countA++;
+                        listA.push(cleanMember);
+                        totalGroupDeposits += (member.depositAmt || 0);
+                        totalABDeposits += (member.depositAmt || 0);
+                    } else if (member.level === 'B') {
+                        countB++;
+                        listB.push(cleanMember);
+                        totalGroupDeposits += (member.depositAmt || 0);
+                        totalABDeposits += (member.depositAmt || 0);
+                    } else if (member.level === 'C') {
+                        countC++;
+                        listC.push(cleanMember);
+                        totalGroupDeposits += (member.depositAmt || 0);
+                    }
+                });
+
+                document.getElementById('btn-team-A').innerText = `ደረጃ A (${countA})`;
+                document.getElementById('btn-team-B').innerText = `ደረጃ B (${countB})`;
+                document.getElementById('btn-team-C').innerText = `ደረጃ C (${countC})`;
+                document.getElementById('total-team-size').innerText = `${countA + countB + countC} አባላት`;
+
+                const depComm = (countA * 80) + (countB * 40) + (countC * 10);
+                const tradeComm = (countA * 15) + (countB * 5) + (countC * 0.5);
+
+                document.getElementById('team-comm-deposit').innerText = `${depComm.toFixed(2)} ETB`;
+                document.getElementById('team-comm-trading').innerText = `${tradeComm.toFixed(2)} ETB`;
+
+                let activeList = [];
+                if (activeTeamLevel === 'A') activeList = listA;
+                else if (activeTeamLevel === 'B') activeList = listB;
+                else if (activeTeamLevel === 'C') activeList = listC;
+
+                const tableBody = document.getElementById('team-members-table');
+                tableBody.innerHTML = "";
+
+                if (activeList.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-gray-500 italic">በዚህ የቡድን ደረጃ ምንም አይነት አባል አልተገኘም።</td></tr>`;
+                } else {
+                    activeList.forEach(m => {
+                        tableBody.innerHTML += `
+                            <tr class="hover:bg-yellow-100/30 transition border-b border-yellow-200">
+                                <td class="p-2.5 font-bold text-amber-955">${m.id}</td>
+                                <td class="p-2.5">${m.phone}</td>
+                                <td class="p-2.5 text-right font-bold text-amber-800">${m.date}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                renderSalariesFeature(totalGroupDeposits, totalABDeposits);
+            });
+        }
+
+        // Render target thresholds for Salary
+        function renderSalariesFeature(totalABC, totalAB) {
+            const container = document.getElementById('salary-cards-list');
+            container.innerHTML = "";
+
+            salariesList.forEach(sal => {
+                const isClaimed = userData.salariesClaimed && userData.salariesClaimed[`salary${sal.id}`];
+                
+                let currentProgress = (sal.id === 6) ? totalAB : totalABC;
+                const progressPct = Math.min(100, (currentProgress / sal.req) * 100);
+                const canClaim = currentProgress >= sal.req && !isClaimed;
+
+                let actionBtn = "";
+                if (isClaimed) {
+                    actionBtn = `<span class="bg-emerald-100 border border-emerald-300 text-emerald-800 text-[10px] font-black px-4 py-2 rounded-xl">ተወስዷል (Claimed)</span>`;
+                } else if (canClaim) {
+                    actionBtn = `<button onclick="claimSalary(${sal.id}, ${sal.reward})" class="gold-button-gradient text-amber-955 font-black text-xs px-4 py-2 rounded-xl animate-pulse">ቀበል (Claim)</button>`;
+                } else {
+                    actionBtn = `<span class="bg-yellow-100 text-amber-700 text-[10px] font-extrabold px-3 py-1.5 rounded-xl border border-yellow-200">ያልተሟላ</span>`;
+                }
+
+                container.innerHTML += `
+                    <div class="bg-white/80 p-4 rounded-2xl border border-yellow-300 space-y-2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-xs font-black text-amber-955">${sal.title} - ${sal.reward} ETB</h4>
+                                <p class="text-[10px] text-amber-800 mt-0.5 leading-tight">${sal.desc}</p>
+                            </div>
+                            ${actionBtn}
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-[9px] font-bold text-amber-700">
+                                <span>የቡድን የተቀማጭ ገደብ፡ ${currentProgress} / ${sal.req} ETB</span>
+                                <span>${Math.round(progressPct)}%</span>
+                            </div>
+                            <div class="w-full bg-yellow-200 h-2 rounded-full overflow-hidden border border-yellow-300 shadow-inner">
+                                <div class="gold-button-gradient h-full rounded-full" style="width: ${progressPct}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Claim salary logic directly updating balance
+        window.claimSalary = async function(id, amount) {
+            try {
+                const currentBal = parseFloat(userData.balance || 0);
+                const updatedBal = currentBal + amount;
+
+                const updates = {};
+                updates[`users/${currentPhone}/balance`] = updatedBal;
+                updates[`users/${currentPhone}/salariesClaimed/salary${id}`] = true;
+
+                await update(ref(db, updates));
+
+                const txRef = ref(db, `transactions/${currentPhone}`);
+                await push(txRef, {
+                    type: 'commission',
+                    amount: amount,
+                    date: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                    status: 'approved',
+                    remark: `Salary Level ${id} Benefit Claimed`
+                });
+
+                alert(`እንኳን ደስ አሎት! የደረጃ ${id} ቋሚ የቡድን ደመወዝ ${amount} ETB ወደ ባላንስዎ በተሳካ ሁኔታ ገብቷል።`);
+            } catch (err) {
+                alert("ደመወዝ ለመቀበል ሲሞከር ስህተት ተፈጥሯል።");
+            }
+        };
+
+        window.switchTeamLevel = function(level) {
+            activeTeamLevel = level;
+            ['A', 'B', 'C'].forEach(l => {
+                const btn = document.getElementById(`btn-team-${l}`);
+                if (l === level) {
+                    btn.className = "py-1.5 rounded-lg bg-yellow-400 text-amber-955 shadow-inner";
+                } else {
+                    btn.className = "py-1.5 rounded-lg text-amber-800";
+                }
+            });
+            renderTeamTab();
+        };
+
+        window.copyShareLink = function() {
+            const input = document.getElementById('share-link-input');
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            alert("የግብዣ ሊንኩ በተሳካ ሁኔታ ተገልብጧል!");
+        };
+
+        // Booklet pager
+        function renderInfoTab() {
+            document.getElementById('info-text-box').innerHTML = documentPages[currentInfoPage - 1];
+            document.getElementById('info-page-indicator').innerText = `ገጽ ${currentInfoPage} / 4`;
+            
+            document.getElementById('btn-info-prev').disabled = currentInfoPage === 1;
+            document.getElementById('btn-info-next').innerText = currentInfoPage === 4 ? "ተጠናቀቀ" : "ቀጣይ ገጽ";
+        }
+
+        window.changeInfoPage = function(dir) {
+            currentInfoPage += dir;
+            if (currentInfoPage < 1) currentInfoPage = 1;
+            if (currentInfoPage > 4) currentInfoPage = 4;
+            renderInfoTab();
+        };
+
+        // Save Global App Config link on Admin setup
+        window.saveAppConfigLink = async function() {
+            const link = document.getElementById('app-config-link').value.trim();
+            if (!link) {
+                alert("እባክዎ መጀመሪያ የአፑን ሊንክ ያስገቡ!");
+                return;
+            }
+
+            try {
+                // Update Globally for all users
+                await set(ref(db, `appConfig/downloadLink`), link);
+                alert("የአፑን ሊንክ ማስገቢያ ኮድ በተሳካ ሁኔታ ተቀምጧል!");
+            } catch (err) {
+                alert("ሊንኩን ማስቀመጥ አልተቻለም።");
+            }
+        };
+
+        // Open App Download Link Globally configured
+        window.downloadApp = function() {
+            if (globalAppLink) {
+                window.open(globalAppLink, '_blank');
+            } else {
+                alert("ማስጠንቀቂያ፦ የአፑ ሊንክ እስካሁን አልተዘጋጀም! እባክዎ መጀመሪያ በ 'ACCOUNT' ገጽ ላይ የአፑን ሊንክ አስገብተው 'አስቀምጥ' የሚለውን ይጫኑ።");
+            }
+        };
+
+        // Credential modifiers
+        window.changePassword = async function() {
+            const oldP = document.getElementById('old-pass').value.trim();
+            const newP = document.getElementById('new-pass').value.trim();
+
+            if (!oldP || !newP) {
+                alert("እባክዎ ሁሉንም ሳጥኖች ይሙሉ!");
+                return;
+            }
+
+            if (oldP !== userData.password) {
+                alert("ስህተት፡ ያስገቡት የድሮ የይለፍ ቃል የተሳሳተ ነው!");
+                return;
+            }
+
+            if (!validatePassword(newP)) {
+                alert("ስህተት፡ አዲሱ የይለፍ ቃል በትክክል 6 የቁጥር አሃዞች መሆን አለበት!");
+                return;
+            }
+
+            try {
+                await update(ref(db, `users/${currentPhone}`), { password: newP });
+                alert("የይለፍ ቃልዎ በተሳካ ሁኔታ ተቀይሯል!");
+                document.getElementById('old-pass').value = "";
+                document.getElementById('new-pass').value = "";
+            } catch (err) {
+                alert("ስህተት ገጥሟል።");
+            }
+        };
+
+        window.changeWalletPin = async function() {
+            const oldPin = document.getElementById('old-pin').value.trim().toUpperCase();
+            const newPin = document.getElementById('new-pin').value.trim().toUpperCase();
+
+            if (!oldPin || !newPin) {
+                alert("እባክዎ ሁሉንም ሳጥኖች ይሙሉ!");
+                return;
+            }
+
+            if (oldPin !== userData.withdrawPasskey) {
+                alert("ስህተት፡ ያስገቡት የድሮ ደህንነት ፒን የተሳሳተ ነው!");
+                return;
+            }
+
+            if (!validatePin(newPin)) {
+                alert("ስህተት፡ አዲሱ ደህንነት ፒን በትክክል 4 ፊደላት መሆን አለበት!");
+                return;
+            }
+
+            try {
+                await update(ref(db, `users/${currentPhone}`), { withdrawPasskey: newPin });
+                alert("የማውጫ ደህንነት ፒንዎ በተሳካ ሁኔታ ተቀይሯል!");
+                document.getElementById('old-pin').value = "";
+                document.getElementById('new-pin').value = "";
+            } catch (err) {
+                alert("ማስቀመጥ አልተቻለም።");
+            }
+        };
+
+        // Filter and render transactional listings
+        function renderTransactionsList() {
+            const txRef = ref(db, `transactions/${currentPhone}`);
+            get(txRef).then((snapshot) => {
+                const container = document.getElementById('tx-history-box');
+                container.innerHTML = "";
+
+                if (!snapshot.exists()) {
+                    container.innerHTML = `<p class="text-xs text-center text-amber-700/60 py-4 italic">ምንም አይነት የግብይት እንቅስቃሴ የለም</p>`;
+                    return;
+                }
+
+                const list = Object.values(snapshot.val());
+                let filtered = list;
+
+                if (currentTxFilter !== 'all') {
+                    filtered = list.filter(t => t.type === currentTxFilter);
+                }
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-center text-amber-700/60 py-4 italic">ምንም የግብይት እንቅስቃሴ አልተመዘገበም</p>`;
+                    return;
+                }
+
+                filtered.reverse().forEach(tx => {
+                    let badgeColor = "bg-yellow-200 text-amber-955";
+                    let sign = "+";
+                    let statusLabel = tx.status === 'pending' ? 'Pending (በመጠባበቅ ላይ)' : (tx.status === 'approved' ? 'Recharged / Successful' : 'Rejected');
+                    let statusClass = tx.status === 'pending' ? 'text-amber-800 font-black animate-pulse' : (tx.status === 'approved' ? 'text-green-700' : 'text-red-600');
+
+                    if (tx.type === 'deposit') {
+                        badgeColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
+                        sign = "+";
+                    } else if (tx.type === 'withdraw') {
+                        badgeColor = "bg-rose-100 text-rose-700 border-rose-300";
+                        sign = "-";
+                    } else {
+                        badgeColor = "bg-yellow-200 text-amber-955 border-yellow-300";
+                        sign = "+";
+                    }
+
+                    container.innerHTML += `
+                        <div class="bg-white/70 p-3 rounded-2xl border border-yellow-300 flex justify-between items-center text-xs">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[9px] px-2 py-0.5 rounded-full border ${badgeColor} font-black uppercase">${tx.type}</span>
+                                    <span class="text-[9px] text-amber-700 font-extrabold">${tx.date}</span>
+                                </div>
+                                <p class="text-[10px] text-amber-800 font-bold">${tx.remark || 'የተጠናቀቀ'}</p>
+                                <p class="text-[9px] ${statusClass}">${statusLabel}</p>
+                            </div>
+                            <span class="font-black text-xs ${tx.type === 'withdraw' ? 'text-red-600' : 'text-green-700'}">${sign}${parseFloat(tx.amount).toFixed(2)} ETB</span>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        window.filterTransactions = function(filter) {
+            currentTxFilter = filter;
+            ['all', 'deposit', 'withdraw', 'commission'].forEach(f => {
+                const btn = document.getElementById(`tx-btn-${f}`);
+                if (f === filter) {
+                    btn.className = "py-1.5 rounded-lg bg-yellow-400 text-amber-955 shadow-inner";
+                } else {
+                    btn.className = "py-1.5 rounded-lg text-amber-800";
+                }
+            });
+            renderTransactionsList();
+        };
+
+        // Log out cleanups
+        window.handleLogout = function() {
+            if (confirm("ከ GCT አፕሊኬሽን መውጣት እርግጠኛ ነዎት?")) {
+                localStorage.removeItem('gct_session_phone');
+                currentPhone = "";
+                userData = {};
+                document.getElementById('auth-container').classList.remove('hidden');
+                toggleAuthBoxes('login');
+                alert("በተሳካ ሁኔታ ወጥተዋል።");
+            }
+        };
+
+        window.dismissSplash = function() {
+            document.getElementById('welcome-splash').classList.add('opacity-0');
+            setTimeout(() => {
+                document.getElementById('welcome-splash').classList.add('hidden');
+            }, 700);
+        };
+
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            const tabIds = ['home', 'package', 'team', 'account'];
+            tabIds.forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                if (t === tabId) {
+                    btn.classList.add('nav-active');
+                } else {
+                    btn.classList.remove('nav-active');
+                }
+            });
+        };
+
+    </script>
+</body>
+</html>
