@@ -894,6 +894,28 @@
                 }
 
                 const newId = "GCT-" + Math.floor(10000 + Math.random() * 90000);
+                
+                // Resolve and store uplines directly in user database for instant access
+                let uplineA = "";
+                let uplineB = "";
+                let uplineC = "";
+
+                if (inviteVal) {
+                    const usersRef = ref(db, 'users');
+                    const usersSnapshot = await get(usersRef);
+                    if (usersSnapshot.exists()) {
+                        const usersList = usersSnapshot.val();
+                        for (let ph in usersList) {
+                            if (usersList[ph].id === inviteVal) {
+                                uplineA = ph;
+                                uplineB = usersList[ph].uplineA || "";
+                                uplineC = usersList[ph].uplineB || "";
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 const newUser = {
                     fullName: fullName,
                     phone: userPhoneKey,
@@ -903,6 +925,9 @@
                     id: newId,
                     appLink: "",
                     referredBy: inviteVal,
+                    uplineA: uplineA,
+                    uplineB: uplineB,
+                    uplineC: uplineC,
                     activePackageId: 0, // Intern Default
                     packagePurchasedDate: "",
                     lastYieldPayoutDate: "",
@@ -1064,6 +1089,14 @@
                 }
             });
 
+            // Active listener to process approved deposit commissions instantly
+            const txRef = ref(db, `transactions/${phoneKey}`);
+            onValue(txRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    processDepositCommissions(snapshot.val());
+                }
+            });
+
             // Listen to Global App Configuration Download Link
             const globalAppRef = ref(db, `appConfig/downloadLink`);
             onValue(globalAppRef, (snapshot) => {
@@ -1074,7 +1107,124 @@
             });
         }
 
-        // Automated background yield processor (Runs on app refresh/open)
+        // Helper function to resolve user's 3 level uplines (with dynamic lookup fallback)
+        async function getUplinesForUser(phoneKey) {
+            const userSnapshot = await get(ref(db, `users/${phoneKey}`));
+            if (userSnapshot.exists()) {
+                const user = userSnapshot.val();
+                if (user.uplineA || user.uplineB || user.uplineC) {
+                    return { A: user.uplineA || "", B: user.uplineB || "", C: user.uplineC || "" };
+                }
+                
+                let uplineA = "";
+                let uplineB = "";
+                let uplineC = "";
+                
+                const inviteVal = user.referredBy;
+                if (inviteVal) {
+                    const usersSnapshot = await get(ref(db, 'users'));
+                    if (usersSnapshot.exists()) {
+                        const usersList = usersSnapshot.val();
+                        for (let ph in usersList) {
+                            if (usersList[ph].id === inviteVal) {
+                                uplineA = ph;
+                                const pInvite = usersList[ph].referredBy;
+                                if (pInvite) {
+                                    for (let phB in usersList) {
+                                        if (usersList[phB].id === pInvite) {
+                                            uplineB = phB;
+                                            const gpInvite = usersList[phB].referredBy;
+                                            if (gpInvite) {
+                                                for (let phC in usersList) {
+                                                    if (usersList[phC].id === gpInvite) {
+                                                        uplineC = phC;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                return { A: uplineA, B: uplineB, C: uplineC };
+            }
+            return { A: "", B: "", C: "" };
+        }
+
+        // Helper function to process instant deposit commissions (8%, 2%, 1% for levels A, B, C)
+        async function processDepositCommissions(transactions) {
+            if (!transactions) return;
+            
+            for (let txId in transactions) {
+                const tx = transactions[txId];
+                if (tx.type === 'deposit' && tx.status === 'approved' && !tx.commissionPaid) {
+                    const depositAmt = parseFloat(tx.amount || 0);
+                    if (depositAmt <= 0) continue;
+
+                    try {
+                        // Mark as paid immediately to avoid duplicate concurrency triggers
+                        await update(ref(db, `transactions/${currentPhone}/${txId}`), { commissionPaid: true });
+                        
+                        const uplines = await getUplinesForUser(currentPhone);
+                        const rates = { A: 0.08, B: 0.02, C: 0.01 };
+
+                        for (let level of ['A', 'B', 'C']) {
+                            const uplinePhone = uplines[level];
+                            if (uplinePhone) {
+                                const commRate = rates[level];
+                                const commAmt = depositAmt * commRate;
+
+                                // Update upline balance
+                                const uplineUserSnap = await get(ref(db, `users/${uplinePhone}`));
+                                if (uplineUserSnap.exists()) {
+                                    const uplineUser = uplineUserSnap.val();
+                                    const oldBal = parseFloat(uplineUser.balance || 0);
+                                    const newBal = oldBal + commAmt;
+                                    
+                                    await update(ref(db, `users/${uplinePhone}`), { balance: newBal });
+
+                                    // Log commission transaction for upline
+                                    const uplineTxRef = ref(db, `transactions/${uplinePhone}`);
+                                    await push(uplineTxRef, {
+                                        type: 'commission',
+                                        amount: commAmt,
+                                        date: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                                        status: 'approved',
+                                        remark: `የደረጃ ${level} የተቀማጭ ኮሚሽን (ከ ID: ${userData.id || "GCT-User"})`
+                                    });
+                                }
+
+                                // Update team member's depositAmt in upline's team node (for salary progression tracking)
+                                const teamMemberRef = ref(db, `team/${uplinePhone}/${currentPhone}`);
+                                const teamMemberSnap = await get(teamMemberRef);
+                                if (teamMemberSnap.exists()) {
+                                    const teamMemberData = teamMemberSnap.val();
+                                    const currentDepAmt = parseFloat(teamMemberData.depositAmt || 0);
+                                    await update(teamMemberRef, { depositAmt: currentDepAmt + depositAmt });
+                                } else {
+                                    await set(teamMemberRef, {
+                                        id: userData.id || "GCT-User",
+                                        phone: currentPhone,
+                                        level: level,
+                                        regDate: userData.packagePurchasedDate || new Date().toISOString().split('T')[0],
+                                        depositAmt: depositAmt
+                                    });
+                                }
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Error processing deposit commission: ", err);
+                    }
+                }
+            }
+        }
+
+        // Automated background yield processor & Dynamic daily commissions (Runs on app refresh/open)
         async function checkAndProcessAutoYield() {
             if (!userData || !userData.activePackageId || userData.activePackageId === 0) return;
 
@@ -1115,6 +1265,43 @@
                             status: 'approved',
                             remark: `የ Package ${userData.activePackageId} ዕለታዊ ገቢ (Auto Yield Payout)`
                         });
+                    }
+
+                    // Process upline Daily Yield Trading Commissions (A: 2%, B: 1%, C: 0.1%)
+                    const uplines = await getUplinesForUser(currentPhone);
+                    const dailyCommRates = { A: 0.02, B: 0.01, C: 0.001 };
+
+                    for (let level of ['A', 'B', 'C']) {
+                        const uplinePhone = uplines[level];
+                        if (uplinePhone) {
+                            const rate = dailyCommRates[level];
+                            const dailyCommAmount = activePkg.daily * rate;
+                            const totalCommAmount = dailyCommAmount * diffDays;
+
+                            if (totalCommAmount > 0) {
+                                const uplineSnap = await get(ref(db, `users/${uplinePhone}`));
+                                if (uplineSnap.exists()) {
+                                    const uplineUser = uplineSnap.val();
+                                    const currentBal = parseFloat(uplineUser.balance || 0);
+                                    const newBal = currentBal + totalCommAmount;
+
+                                    await update(ref(db, `users/${uplinePhone}`), { balance: newBal });
+
+                                    // Append commission logs to upline transactions
+                                    const uplineTxRef = ref(db, `transactions/${uplinePhone}`);
+                                    for (let i = 0; i < diffDays; i++) {
+                                        const logDateStr = new Date(lastPayout.getTime() + (i + 1) * 24 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19);
+                                        await push(uplineTxRef, {
+                                            type: 'commission',
+                                            amount: dailyCommAmount,
+                                            date: logDateStr,
+                                            status: 'approved',
+                                            remark: `የደረጃ ${level} የቀን ገቢ ኮሚሽን (ከ ID: ${userData.id || "GCT-User"})`
+                                        });
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     alert(`እንኳን ደስ አሎት! የ ${diffDays} ቀናት የጥቅል የቀን ገቢ ${totalYield} ETB በራስ-ሰር ታስቦ ወደ ባላንስዎ ተደምሯል።`);
@@ -1179,7 +1366,7 @@
             alert("የንግድ ባንክ አካውንት ቁጥር ተገልብጧል!");
         };
 
-        // Handle Deposit submissions (1ኛ ማሻሻያ፡ የ FT ድግግሞሽ እና ምስል መቆጣጠሪያ በስርዓት እንዲፈተሽ ተደርጓል)
+        // Handle Deposit submissions
         window.submitDeposit = async function() {
             const pkgId = parseInt(document.getElementById('deposit-pkg-select').value);
             const ftRefRaw = document.getElementById('deposit-ft-ref').value.trim();
@@ -1195,11 +1382,11 @@
                 return;
             }
 
-            // FT ንጽጽርን አስተማማኝ ለማድረግ ሁሉንም ክፍተቶች በማጥፋት ወደ ካፒታል እንቀይረዋለን
+            // Standardize and clear spacing from FT receipt code
             const ftRef = ftRefRaw.replace(/\s+/g, '').toUpperCase();
 
             try {
-                // 1ኛ ማሻሻያ ማረጋገጫ፡ የ FT ቁጥር ከዚህ በፊት ጥቅም ላይ መዋሉን በዳታቤዝ ውስጥ ይፈትሻል
+                // Ensure the FT receipt code hasn't been submitted previously
                 const usedFtRefCheck = ref(db, `used_ft_receipts/${ftRef}`);
                 const ftSnapshot = await get(usedFtRefCheck);
 
@@ -1221,10 +1408,8 @@
                     ftRef: ftRef
                 };
 
-                // ግብይቱን ወደ ተጠቃሚው የትራንዛክሽን ዝርዝር መላክ
                 await push(txRef, newTx);
 
-                // 1ኛ ማሻሻያ ማጠናቀቂያ፡ FT ቁጥሩን በዳታቤዝ ውስጥ "ያገለገለ" ብሎ መመዝገብ
                 await set(usedFtRefCheck, {
                     submittedBy: currentPhone,
                     date: new Date().toISOString(),
@@ -1435,7 +1620,6 @@
                 container.innerHTML += `
                     <div class="gold-card p-4 space-y-4">
                         <div class="flex gap-4 items-center">
-                            <!-- Real Trade Good Displayed Exactly as Requested -->
                             <div class="w-20 h-16 rounded-xl bg-yellow-100 border border-yellow-300 flex items-center justify-center overflow-hidden shadow-inner">
                                 <img src="${pkg.image}" alt="${pkg.name}" class="w-full h-full object-cover">
                             </div>
@@ -1659,13 +1843,11 @@
             input.select();
             
             const inviteCode = userData.id || "";
-            // Combine both the invite link and invitation code in the clipboard
             const combinedCopyText = `የ GOLD CITY TRADING የግብዣ ሊንክ (Invite Link)፦\n${input.value}\n\nየግብዣ ኮድ (Invitation Code)፦ ${inviteCode}`;
             
             navigator.clipboard.writeText(combinedCopyText).then(() => {
                 alert("የግብዣ ሊንክ እና ኮድ መረጃው በተሳካ ሁኔታ አብረው ተገልብጠዋል!");
             }).catch(err => {
-                // Fallback in case of restrictions
                 navigator.clipboard.writeText(input.value);
                 alert("የግብዣ ሊንኩ ተገልብጧል!");
             });
@@ -1696,7 +1878,6 @@
             }
 
             try {
-                // Update Globally for all users
                 await set(ref(db, `appConfig/downloadLink`), link);
                 alert("የአፑን ሊንክ ማስገቢያ ኮድ በተሳካ ሁኔታ ተቀምጧል!");
             } catch (err) {
