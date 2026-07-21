@@ -118,7 +118,7 @@
         /* Architectural Building Background for Signup Form */
         .registration-bg {
             background-image: radial-gradient(circle, rgba(254, 249, 195, 0.92) 40%, rgba(254, 240, 138, 0.85) 100%), 
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M9 0h102v120H9V0zm12 12h12v15H21V12zm18 0h12v15H39V12zm18 0h12v15H57V12zm18 0h12v15H75V12zm18 0h12v15H93V12zm-72 24h12v15H21V36zm18 0h12v15H39V36zm18 0h12v15H57V36zm18 0h12v15H75V36zm18 0h12v15H93V36zm-72 24h12v15H21V60zm18 0h12v15H39V60zm18 0h12v15H57V60zm18 0h12v15H75V60zm18 0h12v15H93V60zm-72 24h12v15H21V84zm18 0h12v15H39V84zm18 0h12v15H57V84zm18 0h12v15H75V84zm18 0h12v15H93V84z' fill='%23f2a900' fill-opacity='0.15'/%3E%3C/svg%3E");
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpath d='M9 0h102v120H9V0zm12 12h12v15H21V12zm18 0h12v15H39V12zm18 0h12v15H57V12zm18 0h12v15H75V12zm18 0h12v15H93V12zm-72 24h12v15H21V36zm18 0h12v15H39V36zm18 0h12v15H57V36zm18 0h12v15H75V36zm18 0h12v15H93V36zm-72 24h12v15H21V60zm18 0h12v15H39V60zm18 0h12v15H57V60zm18 0h12v15H75V60zm18 0h12v15H93V60zm-72 84h12v15H21V84zm18 0h12v15H39V84zm18 0h12v15H57V84zm18 0h12v15H75V84zm18 0h12v15H93V84z' fill='%23f2a900' fill-opacity='0.15'/%3E%3C/svg%3E");
             background-size: cover;
             background-position: center;
         }
@@ -1055,6 +1055,12 @@
                     userData = snapshot.val();
                     renderApplicationView();
                     checkAndProcessAutoYield(); // Automated daily yield accumulator trigger
+
+                    // Generate dynamic invitation link with the user's correct registration code
+                    const currentOrigin = window.location.origin + window.location.pathname;
+                    const shareLink = `${currentOrigin}?ref=${userData.id || ""}`;
+                    document.getElementById('share-link-input').value = shareLink;
+                    generateQR(shareLink);
                 }
             });
 
@@ -1066,10 +1072,6 @@
                     document.getElementById('app-config-link').value = globalAppLink;
                 }
             });
-
-            const shareLink = `https://gold-city-trading-plc.web.app/register?ref=${userData.id || ""}`;
-            document.getElementById('share-link-input').value = shareLink;
-            generateQR(shareLink);
         }
 
         // Automated background yield processor (Runs on app refresh/open)
@@ -1655,8 +1657,18 @@
         window.copyShareLink = function() {
             const input = document.getElementById('share-link-input');
             input.select();
-            navigator.clipboard.writeText(input.value);
-            alert("የግብዣ ሊንኩ በተሳካ ሁኔታ ተገልብጧል!");
+            
+            const inviteCode = userData.id || "";
+            // Combine both the invite link and invitation code in the clipboard
+            const combinedCopyText = `የ GOLD CITY TRADING የግብዣ ሊንክ (Invite Link)፦\n${input.value}\n\nየግብዣ ኮድ (Invitation Code)፦ ${inviteCode}`;
+            
+            navigator.clipboard.writeText(combinedCopyText).then(() => {
+                alert("የግብዣ ሊንክ እና ኮድ መረጃው በተሳካ ሁኔታ አብረው ተገልብጠዋል!");
+            }).catch(err => {
+                // Fallback in case of restrictions
+                navigator.clipboard.writeText(input.value);
+                alert("የግብዣ ሊንኩ ተገልብጧል!");
+            });
         };
 
         // Booklet pager
