@@ -779,6 +779,11 @@
         let currentCarouselIndex = 0;
         let currentGeneratedVerifyCode = "";
 
+        // Unsubscribe storage variables to avoid multi-listener duplications
+        let userListenerUnsubscribe = null;
+        let txListenerUnsubscribe = null;
+        let appConfigListenerUnsubscribe = null;
+
         // On Load Init
         window.addEventListener('DOMContentLoaded', () => {
             const depositSelector = document.getElementById('deposit-pkg-select');
@@ -1099,10 +1104,15 @@
             return {};
         }
 
-        // Realtime sync loops
+        // Realtime sync loops with listener clean-up logic to eliminate doubling race conditions
         function connectRealtimeDb(phoneKey) {
+            // Unsubscribe existing listeners to avoid duplicate triggers
+            if (typeof userListenerUnsubscribe === 'function') userListenerUnsubscribe();
+            if (typeof txListenerUnsubscribe === 'function') txListenerUnsubscribe();
+            if (typeof appConfigListenerUnsubscribe === 'function') appConfigListenerUnsubscribe();
+
             const userRef = ref(db, `users/${phoneKey}`);
-            onValue(userRef, (snapshot) => {
+            userListenerUnsubscribe = onValue(userRef, (snapshot) => {
                 if (snapshot.exists()) {
                     userData = snapshot.val();
                     renderApplicationView();
@@ -1118,7 +1128,7 @@
 
             // Active listener to process approved deposit commissions instantly
             const txRef = ref(db, `transactions/${phoneKey}`);
-            onValue(txRef, (snapshot) => {
+            txListenerUnsubscribe = onValue(txRef, (snapshot) => {
                 if (snapshot.exists()) {
                     processDepositCommissions(snapshot.val());
                 }
@@ -1126,7 +1136,7 @@
 
             // Listen to Global App Configuration Download Link
             const globalAppRef = ref(db, `appConfig/downloadLink`);
-            onValue(globalAppRef, (snapshot) => {
+            appConfigListenerUnsubscribe = onValue(globalAppRef, (snapshot) => {
                 if (snapshot.exists()) {
                     globalAppLink = snapshot.val();
                     document.getElementById('app-config-link').value = globalAppLink;
@@ -1185,6 +1195,7 @@
 
         // Helper function to process instant deposit commissions (8%, 2%, 1% for levels A, B, C)
         // Modified to strictly check for Active Package membership (activePackageId > 0)
+        // Also modified to calculate the deposit commission ONLY ONCE (First deposit only), preventing duplicate commission calculations upon Package Upgrade.
         async function processDepositCommissions(transactions) {
             if (!transactions) return;
             
@@ -1198,40 +1209,63 @@
                         // Mark as paid immediately to avoid duplicate concurrency triggers
                         await update(ref(db, `transactions/${currentPhone}/${txId}`), { commissionPaid: true });
                         
-                        const uplines = await getUplinesForUser(currentPhone);
-                        const rates = { A: 0.08, B: 0.02, C: 0.01 };
+                        // Check if deposit commission was already processed for this user
+                        const userRef = ref(db, `users/${currentPhone}`);
+                        const userSnap = await get(userRef);
+                        let alreadyProcessed = false;
+                        if (userSnap.exists()) {
+                            const uData = userSnap.val();
+                            if (uData.depositCommissionProcessed) {
+                                alreadyProcessed = true;
+                            }
+                        }
 
+                        const uplines = await getUplinesForUser(currentPhone);
+
+                        // If NOT processed yet, distribute the 8%, 2%, 1% commissions and mark as processed
+                        if (!alreadyProcessed) {
+                            // Mark as processed immediately so future deposits/upgrades never trigger commission again
+                            await update(ref(db, `users/${currentPhone}`), { depositCommissionProcessed: true });
+
+                            const rates = { A: 0.08, B: 0.02, C: 0.01 };
+
+                            for (let level of ['A', 'B', 'C']) {
+                                const uplinePhone = uplines[level];
+                                if (uplinePhone) {
+                                    const commRate = rates[level];
+                                    const commAmt = depositAmt * commRate;
+
+                                    // Update upline balance only if they are active package members (VIP > 0)
+                                    const uplineUserSnap = await get(ref(db, `users/${uplinePhone}`));
+                                    if (uplineUserSnap.exists()) {
+                                        const uplineUser = uplineUserSnap.val();
+                                        
+                                        // Constraint check: Upline must be package member to receive commission
+                                        if (uplineUser.activePackageId && uplineUser.activePackageId > 0) {
+                                            const oldBal = parseFloat(uplineUser.balance || 0);
+                                            const newBal = oldBal + commAmt;
+                                            
+                                            await update(ref(db, `users/${uplinePhone}`), { balance: newBal });
+
+                                            // Log commission transaction for upline
+                                            const uplineTxRef = ref(db, `transactions/${uplinePhone}`);
+                                            await push(uplineTxRef, {
+                                                type: 'commission',
+                                                amount: commAmt,
+                                                date: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                                                status: 'approved',
+                                                remark: `የደረጃ ${level} የተቀማጭ ኮሚሽን (ከ ID: ${userData.id || "GCT-User"})`
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // ALWAYS update team member's depositAmt in upline's team node (for salary progression tracking)
                         for (let level of ['A', 'B', 'C']) {
                             const uplinePhone = uplines[level];
                             if (uplinePhone) {
-                                const commRate = rates[level];
-                                const commAmt = depositAmt * commRate;
-
-                                // Update upline balance only if they are active package members (VIP > 0)
-                                const uplineUserSnap = await get(ref(db, `users/${uplinePhone}`));
-                                if (uplineUserSnap.exists()) {
-                                    const uplineUser = uplineUserSnap.val();
-                                    
-                                    // Constraint check: Upline must be package member to receive commission
-                                    if (uplineUser.activePackageId && uplineUser.activePackageId > 0) {
-                                        const oldBal = parseFloat(uplineUser.balance || 0);
-                                        const newBal = oldBal + commAmt;
-                                        
-                                        await update(ref(db, `users/${uplinePhone}`), { balance: newBal });
-
-                                        // Log commission transaction for upline
-                                        const uplineTxRef = ref(db, `transactions/${uplinePhone}`);
-                                        await push(uplineTxRef, {
-                                            type: 'commission',
-                                            amount: commAmt,
-                                            date: new Date().toISOString().replace('T', ' ').slice(0, 19),
-                                            status: 'approved',
-                                            remark: `የደረጃ ${level} የተቀማጭ ኮሚሽን (ከ ID: ${userData.id || "GCT-User"})`
-                                        });
-                                    }
-                                }
-
-                                // Update team member's depositAmt in upline's team node (for salary progression tracking)
                                 const teamMemberRef = ref(db, `team/${uplinePhone}/${currentPhone}`);
                                 const teamMemberSnap = await get(teamMemberRef);
                                 if (teamMemberSnap.exists()) {
@@ -1481,7 +1515,7 @@
                 document.getElementById('deposit-file').value = "";
             } catch (err) {
                 console.error(err);
-                alert("ክፍያውን መመዝገብ አልተቻለም። እባክዎ እንደገና ይሞክሩ!");
+                alert("ክፍያውን መመዝገብ አልተቻለም። @GCTprovider ያናግሩ!");
             }
         };
 
@@ -2200,3 +2234,5 @@
     </script>
 </body>
 </html>
+
+
