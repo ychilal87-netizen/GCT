@@ -778,6 +778,7 @@
         let currentTxFilter = 'all';
         let currentCarouselIndex = 0;
         let currentGeneratedVerifyCode = "";
+        const processedTxIds = new Set(); // Session-based cache to prevent race-condition doubling
 
         // Unsubscribe storage variables to avoid multi-listener duplications
         let userListenerUnsubscribe = null;
@@ -1202,6 +1203,10 @@
             for (let txId in transactions) {
                 const tx = transactions[txId];
                 if (tx.type === 'deposit' && tx.status === 'approved' && !tx.commissionPaid) {
+                    // Check local session Set to eliminate overlapping browser/server double triggers
+                    if (processedTxIds.has(txId)) continue;
+                    processedTxIds.add(txId);
+
                     const depositAmt = parseFloat(tx.amount || 0);
                     if (depositAmt <= 0) continue;
 
@@ -1968,6 +1973,7 @@
 
         // Claim salary logic directly updating balance
         // Modified to strictly require Package Membership (activePackageId > 0)
+        // Corrected Firebase syntax multi-path updates (ref(db), updates) to fix the Claim button error.
         window.claimSalary = async function(id, amount) {
             if (!userData.activePackageId || userData.activePackageId === 0) {
                 alert("ስህተት፡ የደመወዝ ክፍያ ለመቀበል መጀመሪያ የ Package አባል መሆን አለብዎት!");
@@ -1981,7 +1987,7 @@
                 updates[`users/${currentPhone}/balance`] = updatedBal;
                 updates[`users/${currentPhone}/salariesClaimed/salary${id}`] = true;
 
-                await update(ref(db, updates));
+                await update(ref(db), updates);
 
                 const txRef = ref(db, `transactions/${currentPhone}`);
                 await push(txRef, {
