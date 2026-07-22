@@ -273,7 +273,7 @@
                         <div class="relative z-10 space-y-1">
                             <span class="text-[10px] font-black uppercase tracking-widest bg-yellow-300 px-2.5 py-0.5 rounded-full text-amber-955 border border-yellow-400 inline-block">የንግድ ቁሳቁስ ስቶክ (#<span id="slide-num">1</span>)</span>
                             <h3 class="text-sm font-black text-white drop-shadow-md" id="slide-title">የቤትና የቢሮ ዕቃዎች (Luxury Furnitures)</h3>
-                            <p class="text-[10px] text-yellow-100 font-bold" id="slide-desc">የተለያዩ ዘመናዊ የቤት እቃዎችን በቀላሉ ይሽጡ፣ ይግዙ፣ ያትርፉ!</p>
+                            <p class="text-[10px] text-yellow-100 font-bold" id="slide-desc">የተለያዩ ዘመናዊ የቤት እቃዎችን በቀላሉ ይሽጡ፣ ይግዙ， ያትርፉ!</p>
                         </div>
                     </div>
                 </div>
@@ -711,7 +711,7 @@
         const documentPages = [
             `<strong>ገጽ 1 - የገንዘብ ማስገቢያ (Deposit) እና የማግበሪያ መመሪያ</strong><br><br>
             • ደንበኞች አካውንታቸውን ለማሳደግ በ "Home" ገጽ ስር የሚገኘውን <strong>"ገንዘብ አስገባ (DEPOSIT)"</strong> ሳጥን መጫን ይኖርባቸዋል።<br>
-            • በክፍሉ ውስጥ የሚገኘውን የባንክ አካውንት ባለቤት <strong>ABREHAM NIBRET</strong> እና የኢትዮጵያ ንግድ ባንክ (CBE) አካውንት ቁጥር <strong>1000585378198</strong> ኮፒ በማድረግ ክፍያውን ማከናወን ይችላሉ።<br>
+            • በክፍሉ ውስጥ የሚገኘውን የባንክ አካውንት ባለቤት <strong>ABREHAM NIBRET</strong> እና የኢትዮጵያ ንግድ ባንክ (CBE) አካውንት ቁጥር <strong>1000585378198</strong> ኮፒ በማድረግ ክፍያውን ማከናወን ይችላሉ。<br>
             • ለማንቃት የፈለጉትን የጥቅል ደረጃ (ከ Package 1 እስከ 10) መርጠው ክፍያ መፈጸም ይችላሉ።<br>
             • ክፍያውን ከፈጸሙ በኋላ የባንክ ማስተላለፊያ ማረጋገጫ ቁጥር <strong>(FT Reference Number)</strong> እና የደረሰኝ ፎቶ <strong>(Receipt Screenshot)</strong> በትክክል ማስገባት ግዴታ ነው።<br>
             • መረጃው ተሞልቶ ሲጠናቀቅ "Submitted" ይባላል። በ Transactions ገጽ ላይ <strong>Pending</strong> ብሎ የሚቆይ ሲሆን， በሌላ ውጫዊ መተግበሪያ በኩል ተረጋግጦ ሲጸድቅ <strong>Recharged</strong> ይላል፤ ባላንሱም ወዲያውኑ ወደ አካውንትዎ ይደመራል።`,
@@ -1203,6 +1203,9 @@
             
             for (let txId in transactions) {
                 const tx = transactions[txId];
+                
+                // የደህንነት ማጣሪያ፦ የተቀማጭ ገንዘቡ (deposit) ግዴታ በአድሚን/በባለሙያ 'approved' መደረጉ ሲረጋገጥ ብቻ ነው ወደ ጋባዥ የቡድን የተቀማጭ መጠን የሚደመረው።
+                // 'pending' (በመጠባበቅ ላይ ያለ) ወይም 'rejected' የሆኑ የሃሰት ሙከራዎች በፍጹም እዚህ ጋር አይፈቀዱም!
                 if (tx.type === 'deposit' && tx.status === 'approved' && !tx.commissionPaid) {
                     // Session-based memory check
                     if (processedTxIds.has(txId)) continue;
@@ -1281,7 +1284,7 @@
                             }
                         }
 
-                        // ALWAYS update team member's depositAmt in upline's team node (for salary progression tracking)
+                        // የተቀማጩ ትክክለኛነት ከተረጋገጠ በኋላ ብቻ በጋባዦች (A፣ B፣ C) ቡድን የተቀማጭ ገደብ (team progress) ላይ ይደመራል።
                         for (let level of ['A', 'B', 'C']) {
                             const uplinePhone = uplines[level];
                             if (uplinePhone) {
@@ -2254,4 +2257,3 @@
     </script>
 </body>
 </html>
-
