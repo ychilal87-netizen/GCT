@@ -714,16 +714,16 @@
             • በክፍሉ ውስጥ የሚገኘውን የባንክ አካውንት ባለቤት <strong>ABREHAM NIBRET</strong> እና የኢትዮጵያ ንግድ ባንክ (CBE) አካውንት ቁጥር <strong>1000585378198</strong> ኮፒ በማድረግ ክፍያውን ማከናወን ይችላሉ።<br>
             • ለማንቃት የፈለጉትን የጥቅል ደረጃ (ከ Package 1 እስከ 10) መርጠው ክፍያ መፈጸም ይችላሉ።<br>
             • ክፍያውን ከፈጸሙ በኋላ የባንክ ማስተላለፊያ ማረጋገጫ ቁጥር <strong>(FT Reference Number)</strong> እና የደረሰኝ ፎቶ <strong>(Receipt Screenshot)</strong> በትክክል ማስገባት ግዴታ ነው።<br>
-            • መረጃው ተሞልቶ ሲጠናቀቅ "Submitted" ይባላል። በ Transactions ገጽ ላይ <strong>Pending</strong> ብሎ የሚቆይ ሲሆን፣ በሌላ ውጫዊ መተግበሪያ በኩል ተረጋግጦ ሲጸድቅ <strong>Recharged</strong> ይላል፤ ባላንሱም ወዲያውኑ ወደ አካውንትዎ ይደመራል።`,
+            • መረጃው ተሞልቶ ሲጠናቀቅ "Submitted" ይባላል። በ Transactions ገጽ ላይ <strong>Pending</strong> ብሎ የሚቆይ ሲሆን， በሌላ ውጫዊ መተግበሪያ በኩል ተረጋግጦ ሲጸድቅ <strong>Recharged</strong> ይላል፤ ባላንሱም ወዲያውኑ ወደ አካውንትዎ ይደመራል።`,
             
             `<strong>ገጽ 2 - የገንዘብ ማውጫ (Withdrawal) ደንቦችና መመሪያ</strong><br><br>
             • ገንዘብ ለማውጣት በ "Home" ገጽ ስር የሚገኘውን <strong>"ገንዘብ አውጣ (WITHDRAW)"</strong> ሳጥን መጫን ይኖርባቸዋል።<br>
             • በክፍያ ማውጫው ላይ ሙሉ ስም እና የኢትዮጵያ ንግድ ባንክ አካውንት ቁጥር መሙላትና ለቀጣይ እንዲቀመጥ (Save) ማድረግ ይችላሉ።<br>
             • <strong>ዝቅተኛው የማውጫ መጠን 150 ETB</strong> ነው።<br>
-            • በቀን ውስጥ <strong>1 ጊዜ ብቻ</strong> ወጪ ማድረግ የሚፈቀድ ሲሆን፣ ከሚወጣው መጠን ላይ <strong>10% የአገልግሎት ክፍያ (Transaction Fee)</strong> ይቀነሳል።<br>
+            • በቀን ውስጥ <strong>1 ጊዜ ብቻ</strong> ወጪ ማድረግ የሚፈቀድ ሲሆን， ከሚወጣው መጠን ላይ <strong>10% የአገልግሎት ክፍያ (Transaction Fee)</strong> ይቀነሳል።<br>
             • <strong>እሑድ እሑድ ገንዘብ ማውጣት በጥብቅ የተከለከለ ነው!</strong> በሳምንቱ የስራ ቀናት ብቻ ማውጣት ይችላሉ።<br>
             • ወጪ ጥያቄ ለመላክ በምዝገባ ወቅት የመዘገቡትን ባለ 4 ፊደላት <strong>Wallet Security PIN</strong> በትክክል ማስገባት አለብዎት።<br>
-            • ጥያቄው እንደተላከ በ "Transactions" ታሪክ ውስጥ "Pending" ብሎ የሚቆይ ሲሆን፣ ክፍያው ተረጋግጦ ሲጠናቀቅ <strong>Successful</strong> ይላል፤ ባላንሱም በቅጽበት ይቀንሳል።`,
+            • ጥያቄው እንደተላከ በ "Transactions" ታሪክ ውስጥ "Pending" ብሎ የሚቆይ ሲሆን， ክፍያው ተረጋግጦ ሲጠናቀቅ <strong>Successful</strong> ይላል፤ ባላንሱም በቅጽበት ይቀንሳል።`,
 
             `<strong>ገጽ 3 - የቀን ገቢ (Daily Income) እና የቡድን ኮሚሽኖች</strong><br><br>
             <strong>1. የቀን ገቢ (Daily Package Income)፦</strong><br>
@@ -1197,24 +1197,40 @@
         // Helper function to process instant deposit commissions (8%, 2%, 1% for levels A, B, C)
         // Modified to strictly check for Active Package membership (activePackageId > 0)
         // Also modified to calculate the deposit commission ONLY ONCE (First deposit only), preventing duplicate commission calculations upon Package Upgrade.
+        // Implemented Server-Side runTransaction on commissionPaid field to completely block multiple devices/listeners (such as client app + admin panel) from doubling the values!
         async function processDepositCommissions(transactions) {
             if (!transactions) return;
             
             for (let txId in transactions) {
                 const tx = transactions[txId];
                 if (tx.type === 'deposit' && tx.status === 'approved' && !tx.commissionPaid) {
-                    // Check local session Set to eliminate overlapping browser/server double triggers
+                    // Session-based memory check
                     if (processedTxIds.has(txId)) continue;
-                    processedTxIds.add(txId);
-
-                    const depositAmt = parseFloat(tx.amount || 0);
-                    if (depositAmt <= 0) continue;
 
                     try {
-                        // Mark as paid immediately to avoid duplicate concurrency triggers
-                        await update(ref(db, `transactions/${currentPhone}/${txId}`), { commissionPaid: true });
-                        
-                        // Check if deposit commission was already processed for this user
+                        // Atomic Transaction to guarantee ONLY ONE client (Admin or Client) processes this
+                        const commissionPaidRef = ref(db, `transactions/${currentPhone}/${txId}/commissionPaid`);
+                        const txResult = await runTransaction(commissionPaidRef, (currentVal) => {
+                            if (currentVal === true) {
+                                return; // Abort transaction if already paid
+                            }
+                            return true; // Commit true to indicate processing has started/completed
+                        });
+
+                        if (!txResult.committed) {
+                            // If transaction was not committed (aborted), another device/client already processed it
+                            continue;
+                        }
+
+                        // Mark as processed in local session as well
+                        processedTxIds.add(txId);
+
+                        const depositAmt = parseFloat(tx.amount || 0);
+                        if (depositAmt <= 0) continue;
+
+                        const uplines = await getUplinesForUser(currentPhone);
+
+                        // Check if deposit commission was already processed for this user profile
                         const userRef = ref(db, `users/${currentPhone}`);
                         const userSnap = await get(userRef);
                         let alreadyProcessed = false;
@@ -1225,11 +1241,9 @@
                             }
                         }
 
-                        const uplines = await getUplinesForUser(currentPhone);
-
                         // If NOT processed yet, distribute the 8%, 2%, 1% commissions and mark as processed
                         if (!alreadyProcessed) {
-                            // Mark as processed immediately so future deposits/upgrades never trigger commission again
+                            // Mark user profile as processed
                             await update(ref(db, `users/${currentPhone}`), { depositCommissionProcessed: true });
 
                             const rates = { A: 0.08, B: 0.02, C: 0.01 };
@@ -1807,7 +1821,7 @@
                                 if (uplineData.activePackageId && uplineData.activePackageId > 0) {
                                     let spins = {};
                                     if (typeof uplineData.spinAttempts === 'number') {
-                                        spins = { "1": uplineData.spinAttempts };
+                                         spins = { "1": uplineData.spinAttempts };
                                     } else if (typeof uplineData.spinAttempts === 'object' && uplineData.spinAttempts !== null) {
                                         spins = { ...uplineData.spinAttempts };
                                     }
@@ -2240,5 +2254,4 @@
     </script>
 </body>
 </html>
-
 
