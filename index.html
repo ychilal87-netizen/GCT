@@ -752,7 +752,7 @@
             { id: 2, title: "የቢሮ ወንበር (Ergonomic Office Chair)", desc: "እጅግ ምቹ ለቢሮ ስራዎች", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=480&q=80" },
             { id: 3, title: "የመኪና ጎማ (Premium Car Tires)", desc: "ደህንነቱ የተረጋገጠ ጥራት ያለው ጎማ", image: "https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=480&q=80" },
             { id: 4, title: "ስማርት ቲቪ (65-inch Smart 4K TV)", desc: "ደማቅና ጥራት ያለው ምስል", image: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?auto=format&fit=crop&w=480&q=80" },
-            { id: 5, title: "ዘመናዊ የልብስ አልባሳት (Luxury Suits)", desc: "ለየት ያሉና ማራኪ ዲዛይኖች", image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=480&q=80" },
+            { id: 5, title: "የዘመናዊ ልብስ አልባሳት (Luxury Suits)", desc: "ለየት ያሉና ማራኪ ዲዛይኖች", image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=480&q=80" },
             { id: 6, title: "የህንጻ ብረታብረት (Reinforced Steel Bars)", desc: "ለላቀና ጠንካራ ግንባታዎች", image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=480&q=80" },
             { id: 7, title: "የወጥ ቤት ማሽነሪ (Smart Blenders)", desc: "ቀላልና ፈጣን የወጥ ቤት ስራዎች", image: "https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?auto=format&fit=crop&w=480&q=80" },
             { id: 8, title: "የቆዳ ጫማዎች (Italian Leather Shoes)", desc: "ለሁሉም ምርጫ የሚስማማ ጥራት", image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=480&q=80" },
@@ -1184,6 +1184,7 @@
         }
 
         // Helper function to process instant deposit commissions (8%, 2%, 1% for levels A, B, C)
+        // Modified to strictly check for Active Package membership (activePackageId > 0)
         async function processDepositCommissions(transactions) {
             if (!transactions) return;
             
@@ -1206,24 +1207,28 @@
                                 const commRate = rates[level];
                                 const commAmt = depositAmt * commRate;
 
-                                // Update upline balance
+                                // Update upline balance only if they are active package members (VIP > 0)
                                 const uplineUserSnap = await get(ref(db, `users/${uplinePhone}`));
                                 if (uplineUserSnap.exists()) {
                                     const uplineUser = uplineUserSnap.val();
-                                    const oldBal = parseFloat(uplineUser.balance || 0);
-                                    const newBal = oldBal + commAmt;
                                     
-                                    await update(ref(db, `users/${uplinePhone}`), { balance: newBal });
+                                    // Constraint check: Upline must be package member to receive commission
+                                    if (uplineUser.activePackageId && uplineUser.activePackageId > 0) {
+                                        const oldBal = parseFloat(uplineUser.balance || 0);
+                                        const newBal = oldBal + commAmt;
+                                        
+                                        await update(ref(db, `users/${uplinePhone}`), { balance: newBal });
 
-                                    // Log commission transaction for upline
-                                    const uplineTxRef = ref(db, `transactions/${uplinePhone}`);
-                                    await push(uplineTxRef, {
-                                        type: 'commission',
-                                        amount: commAmt,
-                                        date: new Date().toISOString().replace('T', ' ').slice(0, 19),
-                                        status: 'approved',
-                                        remark: `የደረጃ ${level} የተቀማጭ ኮሚሽን (ከ ID: ${userData.id || "GCT-User"})`
-                                    });
+                                        // Log commission transaction for upline
+                                        const uplineTxRef = ref(db, `transactions/${uplinePhone}`);
+                                        await push(uplineTxRef, {
+                                            type: 'commission',
+                                            amount: commAmt,
+                                            date: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                                            status: 'approved',
+                                            remark: `የደረጃ ${level} የተቀማጭ ኮሚሽን (ከ ID: ${userData.id || "GCT-User"})`
+                                        });
+                                    }
                                 }
 
                                 // Update team member's depositAmt in upline's team node (for salary progression tracking)
@@ -1252,6 +1257,7 @@
         }
 
         // Automated background yield processor & Dynamic daily commissions (Runs on app refresh/open)
+        // Modified to strictly verify package membership for commission distribution
         async function checkAndProcessAutoYield() {
             if (!userData || !userData.activePackageId || userData.activePackageId === 0) return;
 
@@ -1309,22 +1315,26 @@
                                 const uplineSnap = await get(ref(db, `users/${uplinePhone}`));
                                 if (uplineSnap.exists()) {
                                     const uplineUser = uplineSnap.val();
-                                    const currentBal = parseFloat(uplineUser.balance || 0);
-                                    const newBal = currentBal + totalCommAmount;
+                                    
+                                    // Constraint check: Upline must be package member to receive trading commission
+                                    if (uplineUser.activePackageId && uplineUser.activePackageId > 0) {
+                                        const currentBal = parseFloat(uplineUser.balance || 0);
+                                        const newBal = currentBal + totalCommAmount;
 
-                                    await update(ref(db, `users/${uplinePhone}`), { balance: newBal });
+                                        await update(ref(db, `users/${uplinePhone}`), { balance: newBal });
 
-                                    // Append commission logs to upline transactions
-                                    const uplineTxRef = ref(db, `transactions/${uplinePhone}`);
-                                    for (let i = 0; i < diffDays; i++) {
-                                        const logDateStr = new Date(lastPayout.getTime() + (i + 1) * 24 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19);
-                                        await push(uplineTxRef, {
-                                            type: 'commission',
-                                            amount: dailyCommAmount,
-                                            date: logDateStr,
-                                            status: 'approved',
-                                            remark: `የደረጃ ${level} የቀን ገቢ ኮሚሽን (ከ ID: ${userData.id || "GCT-User"})`
-                                        });
+                                        // Append commission logs to upline transactions
+                                        const uplineTxRef = ref(db, `transactions/${uplinePhone}`);
+                                        for (let i = 0; i < diffDays; i++) {
+                                            const logDateStr = new Date(lastPayout.getTime() + (i + 1) * 24 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19);
+                                            await push(uplineTxRef, {
+                                                type: 'commission',
+                                                amount: dailyCommAmount,
+                                                date: logDateStr,
+                                                status: 'approved',
+                                                remark: `የደረጃ ${level} የቀን ገቢ ኮሚሽን (ከ ID: ${userData.id || "GCT-User"})`
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -1788,9 +1798,10 @@
         };
 
         // Render dynamic Level structural lists
+        // Modified to calculate Actual Deposit and Daily Trading commissions from real transaction records
         function renderTeamTab() {
             const teamRef = ref(db, `team/${currentPhone}`);
-            get(teamRef).then((snapshot) => {
+            get(teamRef).then(async (snapshot) => {
                 const teamData = snapshot.val() || {};
                 
                 let countA = 0, countB = 0, countC = 0;
@@ -1825,11 +1836,31 @@
                 document.getElementById('btn-team-C').innerText = `ደረጃ C (${countC})`;
                 document.getElementById('total-team-size').innerText = `${countA + countB + countC} አባላት`;
 
-                const depComm = (countA * 80) + (countB * 40) + (countC * 10);
-                const tradeComm = (countA * 15) + (countB * 5) + (countC * 0.5);
+                // Calculate Actual Deposit and Daily Trading commissions from real transaction records
+                let actualDepCommSum = 0;
+                let actualTradeCommSum = 0;
+                try {
+                    const txSnapshot = await get(ref(db, `transactions/${currentPhone}`));
+                    if (txSnapshot.exists()) {
+                        const txs = Object.values(txSnapshot.val());
+                        txs.forEach(tx => {
+                            if (tx.type === 'commission') {
+                                const amt = parseFloat(tx.amount || 0);
+                                const remark = tx.remark || "";
+                                if (remark.includes("የተቀማጭ") || remark.toLowerCase().includes("deposit")) {
+                                    actualDepCommSum += amt;
+                                } else if ((remark.includes("የቀን ገቢ ኮሚሽን") || remark.toLowerCase().includes("trading")) && !remark.includes("የ Package")) {
+                                    actualTradeCommSum += amt;
+                                }
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error reading commissions: ", e);
+                }
 
-                document.getElementById('team-comm-deposit').innerText = `${depComm.toFixed(2)} ETB`;
-                document.getElementById('team-comm-trading').innerText = `${tradeComm.toFixed(2)} ETB`;
+                document.getElementById('team-comm-deposit').innerText = `${actualDepCommSum.toFixed(2)} ETB`;
+                document.getElementById('team-comm-trading').innerText = `${actualTradeCommSum.toFixed(2)} ETB`;
 
                 let activeList = [];
                 if (activeTeamLevel === 'A') activeList = listA;
@@ -1902,7 +1933,12 @@
         }
 
         // Claim salary logic directly updating balance
+        // Modified to strictly require Package Membership (activePackageId > 0)
         window.claimSalary = async function(id, amount) {
+            if (!userData.activePackageId || userData.activePackageId === 0) {
+                alert("ስህተት፡ የደመወዝ ክፍያ ለመቀበል መጀመሪያ የ Package አባል መሆን አለብዎት!");
+                return;
+            }
             try {
                 const currentBal = parseFloat(userData.balance || 0);
                 const updatedBal = currentBal + amount;
