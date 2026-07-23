@@ -699,17 +699,18 @@
             { id: 10, name: "Package 10", price: 1000000, daily: 30000, locked: true, icon: "fa-anchor", desc: "የከባድ ኢንዱስትሪ ዕቃዎች ንግድ", image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=400&q=80" }
         ];
 
-        // የ 'C' ቡድን ተቀናሽ ተደርጎ በደረጃ A እና B አባላት ብቻ እንዲተካ ተሻሽሏል
+        // የ 'C' ቡድን ተቀናሽ ተደርጎ በደረጃ A እና B አባላት ብቻ እንዲተካ እንዲሁም የተጠቃሚው አዲሱ የSalary እና ገደብ ዋጋዎች ተካተዋል
         const salariesList = [
             { id: 1, reward: 200, req: 8000, title: "Salary Level 1", desc: "ደረጃ A እና B ቡድኖች በአጠቃላይ 8,000 ETB ሲያስገቡ" },
             { id: 2, reward: 1000, req: 20000, title: "Salary Level 2", desc: "ደረጃ A እና B ቡድኖች በአጠቃላይ 20,000 ETB ሲያስገቡ" },
             { id: 3, reward: 2000, req: 50000, title: "Salary Level 3", desc: "ደረጃ A እና B ቡድኖች በአጠቃላይ 50,000 ETB ሲያስገቡ" },
-            { id: 4, reward: 3000, req: 500000, title: "Salary Level 4", desc: "ደረጃ A እና B ቡድኖች በአጠቃላይ 500,000 ETB ሲያስገቡ" },
-            { id: 5, reward: 5000, req: 100000, title: "Salary Level 5 (ከተረጋገጠ በኋላ)", desc: "ደረጃ A እና B ቡድኖች 100,000 ETB አስገብተው ሲጸድቅላቸው" },
-            { id: 6, reward: 10000, req: 300000, title: "Salary Level 6 (ከተረጋገጠ በኋላ)", desc: "ደረጃ A እና B ቡድኖች ብቻ 300,000 ETB ተቀማጭ አድርገው ሲጸድቅላቸው" }
+            { id: 4, reward: 4000, req: 100000, title: "Salary Level 4", desc: "ደረጃ A እና B ቡድኖች በአጠቃላይ 100,000 ETB ሲያስገቡ" },
+            { id: 5, reward: 8000, req: 200000, title: "Salary Level 5 (ከተረጋገጠ በኋላ)", desc: "ደረጃ A እና B ቡድኖች 200,000 ETB አስገብተው ሲጸድቅላቸው" },
+            { id: 6, reward: 16000, req: 400000, title: "Salary Level 6 (ከተረጋገጠ በኋላ)", desc: "ደረጃ A እና B ቡድኖች ብቻ 400,000 ETB ተቀማጭ አድርገው ሲጸድቅላቸው" },
+            { id: 7, reward: 50000, req: 1000000, title: "Salary Level 7 (ከተረጋገጠ በኋላ)", desc: "ደረጃ A እና B ቡድኖች ብቻ 1,000,000 ETB ተቀማጭ አድርገው ሲጸድቅላቸው" }
         ];
 
-        // የ 'C' ቡድን ተቀናሽ ተደርጎ በደረጃ A እና B አባላት ብቻ እንዲተካ ገጽ 3 መመሪያው ተሻሽሏል
+        // የ 'C' ቡድን ተቀናሽ ተደርጎ በደረጃ A እና B አባላት ብቻ እንዲተካ እንዲሁም አዲሶቹ ደረጃዎች በገጽ 3 መመሪያ ተሻሽለዋል
         const documentPages = [
             `<strong>ገጽ 1 - የገንዘብ ማስገቢያ (Deposit) እና የማግበሪያ መመሪያ</strong><br><br>
             • ደንበኞች አካውንታቸውን ለማሳደግ በ "Home" ገጽ ስር የሚገኘውን <strong>"ገንዘብ አስገባ (DEPOSIT)"</strong> ሳጥን መጫን ይኖርባቸዋል።<br>
@@ -735,7 +736,7 @@
             <strong>2. የቡድን ኮሚሽን (Team Commissions)፦</strong><br>
             • <strong>የተቀማጭ (Deposit) ኮሚሽን፦</strong> ደረጃ A (8%) | ደረጃ B (2%) | ደረጃ C (1%) ከተጋባዦች የተቀማጭ መጠን ላይ በቀጥታ ወደ ባላንስዎ ወዲያውኑ ይደመራል።<br>
             • <strong>የቀን ገቢ (Daily Trading) ኮሚሽን፦</strong> ደረጃ A (2%) | ደረጃ B (1%) | ደረጃ C (0.1%) ከተጋባዦች የቀን ገቢ ትርፍ ላይ በየቀኑ በራስ-ሰር ይደመራል።<br>
-            • <strong>ቋሚ ደመወዝ (Salaries)፦</strong> የቡድን አባላት (ደረጃ A እና B ብቻ) ያስገቡት የተቀማጭ ገንዘብ 8,000 (ደመወዝ 200 ETB)፣ 20,000 (ደመወዝ 1000 ETB)፣ 50,000 (ደመወዝ 2000 ETB)፣ 500,000 (ደመወዝ 3000 ETB) ሲደርስ እንዲሁም ከጸደቀላቸው በኋላ 100,000 (ደመወዝ 5000 ETB) እና ደረጃ A እና B ብቻ 300,000 ሲደርስ (ደመወዝ 10,000 ETB) "Claim" በማድረግ በቀጥታ ወደ ባላንስዎ መደመር ይችላሉ።`,
+            • <strong>ቋሚ ደመወዝ (Salaries)፦</strong> የቡድን አባላት (ደረጃ A እና B ብቻ) ያስገቡት የተቀማጭ ገንዘብ 8,000 (ደመወዝ 200 ETB)፣ 20,000 (ደመወዝ 1000 ETB)፣ 50,000 (ደመወዝ 2000 ETB)፣ 100,000 (ደመወዝ 4000 ETB)፣ 200,000 (ደመወዝ 8000 ETB)፣ 400,000 (ደመወዝ 16000 ETB) እና 1,000,000 (ደመወዝ 50000 ETB) ሲደርስ "Claim" በማድረግ በቀጥታ ወደ ባላንስዎ መደመር ይችላሉ።`,
 
             `<strong>ገጽ 4 - የዕድል እሽክርክሪት (Lucky Wheel) እና የቦነስ ኮድ ደንቦች</strong><br><br>
             <strong>1. የዕድል እሽክርክሪት (Lucky Wheel)፦</strong><br>
@@ -745,7 +746,7 @@
             <strong>2. የሳምንቱ ቦነስ ኮድ (Bonus Code)፦</strong><br>
             • የ Package አባላት ብቻ (Interns አይጨምርም) በሳምንት አንድ ጊዜ እሑድ እሑድ የሚለቀቀውን የ Bonus Code መጠቀም ይችላሉ።<br>
             • ተጠቃሚ ለመሆን በሳምንቱ ውስጥ ቢያንስ <strong>1 አዲስ አባል የጋበዙ መሆን አለባቸው</strong>።<br>
-            • ኮዱ መጀመሪያ ለሚቀድሙ 20 ሰዎች ብቻ የሚሰራ ሲሆን፣ ኮዱን ሲያስገቡ <strong>50 ETB</strong> ወዲያውኑ ወደ ዋናው ባላንሳቸው ይደመርላቸዋል።`
+            • ኮዱ መጀመሪያ ለሚቀድሙ 20 ሰዎች ብቻ የሚሰራ ሲሆን， ኮዱን ሲያስገቡ <strong>50 ETB</strong> ወዲያውኑ ወደ ዋናው ባላንሳቸው ይደመርላቸዋል።`
         ];
 
         // Real Commercial/Trading Stock Pre-vetted high-quality Unsplash image URLs
@@ -857,11 +858,6 @@
             return re.test(pass);
         }
 
-        function validatePin(pin) {
-            const re = /^[A-Za-z]{4}$/; // Exact 4 letters
-            return re.test(pin);
-        }
-
         // Handle Account Registration
         window.handleRegister = async function() {
             const fullName = document.getElementById('reg-fullname').value.trim();
@@ -955,7 +951,8 @@
                         salary3: false,
                         salary4: false,
                         salary5: false,
-                        salary6: false
+                        salary6: false,
+                        salary7: false // Salary 7 ድጋፍ ታክሏል
                     }
                 };
 
@@ -2159,7 +2156,7 @@
                 document.getElementById('old-pin').value = "";
                 document.getElementById('new-pin').value = "";
             } catch (err) {
-                alert("маስቀመጥ አልተቻለም።");
+                alert("ማስቀመጥ አልተቻለም።");
             }
         };
 
