@@ -847,16 +847,22 @@
             }
         };
 
-        // Reg constraints
-        function validatePhone(phone) {
+        // Reg constraints on window to prevent ReferenceErrors under block/module scoping
+        window.validatePhone = function(phone) {
             const re = /^9\d{8}$/; // Exact 9 digits starting with 9
             return re.test(phone);
-        }
+        };
 
-        function validatePassword(pass) {
+        window.validatePassword = function(pass) {
             const re = /^\d{6}$/; // Exact 6 numeric digits
             return re.test(pass);
-        }
+        };
+
+        // የጠፋውን የ validatePin ቼክ በዊንዶው ግሎባል ስኮፕ (Window Global Scope) ላይ በጥብቅ አስረነዋል
+        window.validatePin = function(pin) {
+            const re = /^[A-Za-z]{4}$/; // ልክ 4 ፊደላት መሆን አለበት
+            return re.test(pin);
+        };
 
         // Handle Account Registration
         window.handleRegister = async function() {
@@ -872,17 +878,17 @@
                 return;
             }
 
-            if (!validatePhone(phoneVal)) {
+            if (!window.validatePhone(phoneVal)) {
                 alert("ስህተት፡ የስልክ ቁጥር +251 9 ጀምሮ 9 ዲጂት መሆን አለበት (ለምሳሌ፡ 912345678)!");
                 return;
             }
 
-            if (!validatePassword(passVal)) {
+            if (!window.validatePassword(passVal)) {
                 alert("ስህተት፡ የይለፍ ቃል በትክክል 6 የቁጥር አሃዞች መሆን አለበት!");
                 return;
             }
 
-            if (!validatePin(pinVal)) {
+            if (!window.validatePin(pinVal)) {
                 alert("ስህተት፡ የደህንነት ፒን በትክክል 4 ፊደላት መሆን አለበት!");
                 return;
             }
@@ -2116,7 +2122,7 @@
                 return;
             }
 
-            if (!validatePassword(newP)) {
+            if (!window.validatePassword(newP)) {
                 alert("ስህተት፡ አዲሱ የይለፍ ቃል በትክክል 6 የቁጥር አሃዞች መሆን አለበት!");
                 return;
             }
@@ -2145,7 +2151,7 @@
                 return;
             }
 
-            if (!validatePin(newPin)) {
+            if (!window.validatePin(newPin)) {
                 alert("ስህተት፡ አዲሱ ደህንነት ፒን በትክክል 4 ፊደላት መሆን አለበት!");
                 return;
             }
