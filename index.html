@@ -265,6 +265,14 @@
                     <i class="fa-solid fa-cloud-arrow-down"></i> አውርድ (App)
                 </button>
             </div>
+
+            <!-- Payout Countdown Timer Card -->
+            <div id="payout-timer-card" class="gold-card p-3 bg-gradient-to-r from-amber-50 to-yellow-100 border-2 border-yellow-400 hidden">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="font-bold text-amber-900 flex items-center gap-1.5"><i class="fa-solid fa-clock animate-pulse text-amber-600"></i> ቀጣይ የቀን ገቢ መውረጃ ሰዓት ቆጣሪ፡</span>
+                    <span id="payout-countdown" class="font-black text-amber-955 bg-yellow-300 px-3 py-1 rounded-full text-center tracking-widest min-w-[85px]">--:--:--</span>
+                </div>
+            </div>
             
             <!-- 16:9 Carousel (100 Fast-Changing Images Showcase) -->
             <div class="gold-card p-2 relative overflow-hidden gct-rainbow-glow">
@@ -813,6 +821,9 @@
                 connectRealtimeDb(currentPhone);
                 document.getElementById('auth-container').classList.add('hidden');
             }
+
+            // Start Countdown Payout Timer tick loop
+            setInterval(updatePayoutCountdown, 1000);
         });
 
         // Verification Generators
@@ -1317,8 +1328,44 @@
             }
         }
 
+        // Active countdown visual card update logic
+        function updatePayoutCountdown() {
+            const timerCard = document.getElementById('payout-timer-card');
+            const timerSpan = document.getElementById('payout-countdown');
+            
+            if (!userData || !userData.activePackageId || userData.activePackageId === 0) {
+                timerCard.classList.add('hidden');
+                return;
+            }
+            
+            const lastPayoutStr = userData.lastYieldPayoutDate || userData.packagePurchasedDate;
+            if (!lastPayoutStr) {
+                timerCard.classList.add('hidden');
+                return;
+            }
+            
+            timerCard.classList.remove('hidden');
+            const lastPayout = new Date(lastPayoutStr);
+            const nextPayoutTime = new Date(lastPayout.getTime() + 24 * 60 * 60 * 1000);
+            const now = new Date();
+            
+            const diffTime = nextPayoutTime - now;
+            if (diffTime <= 0) {
+                timerSpan.innerText = "00:00:00";
+                checkAndProcessAutoYield(); // Trigger balance distribution when completed
+            } else {
+                const hours = Math.floor(diffTime / (1000 * 60 * 60));
+                const minutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diffTime % (1000 * 60)) / 1000);
+                
+                const formatNum = (num) => String(num).padStart(2, '0');
+                timerSpan.innerText = `${formatNum(hours)}:${formatNum(minutes)}:${formatNum(seconds)}`;
+            }
+        }
+
         // Automated background yield processor & Dynamic daily commissions (Runs on app refresh/open)
         // Modified to strictly verify package membership for commission distribution
+        // Enforces exact 24hr completion before adding to balance
         async function checkAndProcessAutoYield() {
             if (!userData || !userData.activePackageId || userData.activePackageId === 0) return;
 
@@ -1329,8 +1376,8 @@
             const lastPayout = new Date(lastPayoutStr);
             const now = new Date();
 
-            // Calculate diff days
-            const diffTime = Math.abs(now - lastPayout);
+            // Calculate diff days (Strict 24-hour interval countdown check)
+            const diffTime = now - lastPayout;
             const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
             if (diffDays >= 1) {
@@ -1339,7 +1386,10 @@
 
                 const totalYield = activePkg.daily * diffDays;
                 const newBalance = parseFloat(userData.balance || 0) + totalYield;
-                const todayDateStr = now.toISOString().split('T')[0];
+                
+                // Enforce incrementing yield payout calendar by precise multiples of 24 hours
+                const newPayoutTime = new Date(lastPayout.getTime() + diffDays * 24 * 60 * 60 * 1000);
+                const todayDateStr = newPayoutTime.toISOString().split('T')[0];
 
                 try {
                     // Update main balance & payout date inside database
@@ -1617,7 +1667,7 @@
                 const remainingBal = userData.balance - amount;
                 await update(ref(db, `users/${currentPhone}`), { balance: remainingBal });
 
-                await push(txRef, newTx);
+                await push(txRef, { ...newTx });
                 alert(`የወጪ ጥያቄዎ በተሳካ ሁኔታ ተልኳል። 10% ፌ ተቀንሶ ${netAmount.toFixed(2)} ETB በባንክዎ ይላካል።`);
                 closeModal('withdraw-modal');
                 document.getElementById('withdraw-amount').value = "";
@@ -2032,12 +2082,24 @@
         // Claim salary logic directly updating balance
         // Modified to strictly require Package Membership (activePackageId > 0)
         // Corrected Firebase syntax multi-path updates (ref(db), updates) to fix the Claim button error.
+        // Hard-locked with pre-verification check to avoid double commission logging
         window.claimSalary = async function(id, amount) {
             if (!userData.activePackageId || userData.activePackageId === 0) {
                 alert("ስህተት፡ የደመወዝ ክፍያ ለመቀበል መጀመሪያ የ Package አባል መሆን አለብዎት!");
                 return;
             }
             try {
+                // Pre-verify on server key path before claim triggers
+                const userRef = ref(db, `users/${currentPhone}`);
+                const userSnap = await get(userRef);
+                if (userSnap.exists()) {
+                    const u = userSnap.val();
+                    if (u.salariesClaimed && u.salariesClaimed[`salary${id}`] === true) {
+                        alert("ስህተት፡ ይህ የደመወዝ ክፍያ ቀድሞ ተወስዷል!");
+                        return;
+                    }
+                }
+
                 const currentBal = parseFloat(userData.balance || 0);
                 const updatedBal = currentBal + amount;
 
@@ -2222,7 +2284,23 @@
                 filtered.reverse().forEach(tx => {
                     let badgeColor = "bg-yellow-200 text-amber-955";
                     let sign = "+";
-                    let statusLabel = tx.status === 'pending' ? 'Pending (በመጠባበቅ ላይ)' : (tx.status === 'approved' ? 'Recharged / Successful' : 'Rejected');
+                    let statusLabel = "";
+                    
+                    // Enforce custom labels explicitly: Deposit Approved -> Recharged, Withdraw Approved -> Successful
+                    if (tx.status === 'pending') {
+                        statusLabel = 'Pending (በመጠባበቅ ላይ)';
+                    } else if (tx.status === 'approved') {
+                        if (tx.type === 'deposit') {
+                            statusLabel = 'Recharged';
+                        } else if (tx.type === 'withdraw') {
+                            statusLabel = 'Successful';
+                        } else {
+                            statusLabel = 'Approved'; // Commissions avoid registering 'Recharged / Successful'
+                        }
+                    } else {
+                        statusLabel = 'Rejected';
+                    }
+                    
                     let statusClass = tx.status === 'pending' ? 'text-amber-800 font-black animate-pulse' : (tx.status === 'approved' ? 'text-green-700' : 'text-red-600');
 
                     if (tx.type === 'deposit') {
