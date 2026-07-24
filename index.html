@@ -419,7 +419,7 @@
                         <thead>
                             <tr class="bg-yellow-300/50 text-amber-955 border-b border-yellow-400 font-black">
                                 <th class="p-2">የአባል ID</th>
-                                <th class="p-2">ስልክ ቁጥር</th>
+                                <th class="p-2">ስልክ (ደረጃ)</th>
                                 <th class="p-2 text-right">የምዝገባ ቀን</th>
                             </tr>
                         </thead>
@@ -1875,7 +1875,12 @@
             get(teamRef).then(async (snapshot) => {
                 const teamData = snapshot.val() || {};
                 
+                // Fetch all users to check activePackageId dynamically
+                const usersSnap = await get(ref(db, 'users'));
+                const allUsers = usersSnap.exists() ? usersSnap.val() : {};
+
                 let countA = 0, countB = 0, countC = 0;
+                let pkgA = 0, pkgB = 0, pkgC = 0;
                 let listA = [], listB = [], listC = [];
                 let totalGroupDeposits = 0;
                 let totalABDeposits = 0;
@@ -1883,28 +1888,44 @@
                 Object.values(teamData).forEach(member => {
                     const rawPhone = member.phone || "";
                     const maskedPhone = rawPhone.length > 8 ? rawPhone.slice(0, 4) + "****" + rawPhone.slice(-3) : rawPhone;
-                    const cleanMember = { id: member.id, phone: maskedPhone, date: member.regDate, level: member.level };
+                    
+                    // Retrieve team member's active package status
+                    const uProfile = allUsers[member.phone];
+                    const activePkgId = uProfile ? (uProfile.activePackageId || 0) : 0;
+                    const packageLevel = activePkgId > 0 ? `Package ${activePkgId}` : "Intern (ያልገዛ)";
+                    const hasPackage = activePkgId > 0;
+
+                    const cleanMember = { 
+                        id: member.id, 
+                        phone: maskedPhone, 
+                        date: member.regDate, 
+                        level: member.level,
+                        packageLevel: packageLevel
+                    };
 
                     if (member.level === 'A') {
                         countA++;
+                        if (hasPackage) pkgA++;
                         listA.push(cleanMember);
                         totalGroupDeposits += (member.depositAmt || 0);
                         totalABDeposits += (member.depositAmt || 0);
                     } else if (member.level === 'B') {
                         countB++;
+                        if (hasPackage) pkgB++;
                         listB.push(cleanMember);
                         totalGroupDeposits += (member.depositAmt || 0);
                         totalABDeposits += (member.depositAmt || 0);
                     } else if (member.level === 'C') {
                         countC++;
+                        if (hasPackage) pkgC++;
                         listC.push(cleanMember);
                         // የ 'C' ቡድን አባላት ተቀማጭ በቡድን የደመወዝ ገደብ ስሌት (totalABDeposits) ውስጥ እንዳይደመር ተወግዷል
                     }
                 });
 
-                document.getElementById('btn-team-A').innerText = `ደረጃ A (${countA})`;
-                document.getElementById('btn-team-B').innerText = `ደረጃ B (${countB})`;
-                document.getElementById('btn-team-C').innerText = `ደረጃ C (${countC})`;
+                document.getElementById('btn-team-A').innerText = `ደረጃ A (${pkgA}/${countA})`;
+                document.getElementById('btn-team-B').innerText = `ደረጃ B (${pkgB}/${countB})`;
+                document.getElementById('btn-team-C').innerText = `ደረጃ C (${pkgC}/${countC})`;
                 document.getElementById('total-team-size').innerText = `${countA + countB + countC} አባላት`;
 
                 // Calculate Actual Deposit and Daily Trading commissions from real transaction records
@@ -1948,7 +1969,10 @@
                         tableBody.innerHTML += `
                             <tr class="hover:bg-yellow-100/30 transition border-b border-yellow-200">
                                 <td class="p-2.5 font-bold text-amber-955">${m.id}</td>
-                                <td class="p-2.5">${m.phone}</td>
+                                <td class="p-2.5">
+                                    ${m.phone}
+                                    <span class="block text-[9px] font-black text-amber-700 bg-yellow-200 px-1.5 py-0.5 rounded border border-yellow-300 mt-0.5 w-max">${m.packageLevel}</span>
+                                </td>
                                 <td class="p-2.5 text-right font-bold text-amber-800">${m.date}</td>
                             </tr>
                         `;
@@ -2103,7 +2127,7 @@
             if (globalAppLink) {
                 window.open(globalAppLink, '_blank');
             } else {
-                alert("ማስጠንቀቂያ፦ የአፑ ሊንክ እስካሁን አልተዘጋጀም! እባክዎ መጀመሪያ በ 'ACCOUNT' ገጽ ላይ የአፑን ሊንክ አስገብተው 'አስቀምጥ' የሚለውን ይጫኑ።");
+                alert("маስጠንቀቂያ፦ የአፑ ሊንክ እስካሁን አልተዘጋጀም! እባክዎ መጀመሪያ በ 'ACCOUNT' ገጽ ላይ የአፑን ሊንክ አስገብተው 'አስቀምጥ' የሚለውን ይጫኑ።");
             }
         };
 
@@ -2179,10 +2203,15 @@
                 }
 
                 const list = Object.values(snapshot.val());
-                let filtered = list;
+                
+                // የጥቅል/ፓኬጅ መግዣ ታሪኮችን ከዝርዝሩ ውስጥ ማጣሪያ (የወጣ የባንክ ገንዘብ ብቻ እንዲያሳይ)
+                let filtered = list.filter(tx => {
+                    const remark = (tx.remark || "").toLowerCase();
+                    return !(tx.type === 'withdraw' && (remark.includes('package') || remark.includes('ጥቅል') || remark.includes('investment')));
+                });
 
                 if (currentTxFilter !== 'all') {
-                    filtered = list.filter(t => t.type === currentTxFilter);
+                    filtered = filtered.filter(t => t.type === currentTxFilter);
                 }
 
                 if (filtered.length === 0) {
@@ -2207,6 +2236,12 @@
                         sign = "+";
                     }
 
+                    // የደንበኛ የባንክ አካውንት ቁጥር ደህንነት ለመጠበቅ በ **** እንዲሸፈን ማድረግ
+                    let displayRemark = tx.remark || 'የተጠናቀቀ';
+                    if (tx.type === 'withdraw') {
+                        displayRemark = displayRemark.replace(/\d+/g, '****');
+                    }
+
                     container.innerHTML += `
                         <div class="bg-white/70 p-3 rounded-2xl border border-yellow-300 flex justify-between items-center text-xs">
                             <div class="space-y-1">
@@ -2214,7 +2249,7 @@
                                     <span class="text-[9px] px-2 py-0.5 rounded-full border ${badgeColor} font-black uppercase">${tx.type}</span>
                                     <span class="text-[9px] text-amber-700 font-extrabold">${tx.date}</span>
                                 </div>
-                                <p class="text-[10px] text-amber-800 font-bold">${tx.remark || 'የተጠናቀቀ'}</p>
+                                <p class="text-[10px] text-amber-800 font-bold">${displayRemark}</p>
                                 <p class="text-[9px] ${statusClass}">${statusLabel}</p>
                             </div>
                             <span class="font-black text-xs ${tx.type === 'withdraw' ? 'text-red-600' : 'text-green-700'}">${sign}${parseFloat(tx.amount).toFixed(2)} ETB</span>
