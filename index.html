@@ -707,7 +707,7 @@
             { id: 10, name: "Package 10", price: 1000000, daily: 30000, locked: true, icon: "fa-anchor", desc: "የከባድ ኢንዱስትሪ ዕቃዎች ንግድ", image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=400&q=80" }
         ];
 
-        // የ 'C' ቡድን ተቀናሽ ተደርጎ በደረጃ A እና B አባላት ብቻ እንዲተካ እንዲሁም የተጠቃሚው አዲሱ የSalary እና ገደብ ዋጋዎች ተካተዋል
+        // የ 'C' ቡድን ተቀናሽ ተደርጎ በደረጃ A እና B аባላት ብቻ እንዲተካ እንዲሁም የተጠቃሚው አዲሱ የSalary እና ገደብ ዋጋዎች ተካተዋል
         const salariesList = [
             { id: 1, reward: 200, req: 8000, title: "Salary Level 1", desc: "ደረጃ A እና B ቡድኖች በአጠቃላይ 8,000 ETB ሲያስገቡ" },
             { id: 2, reward: 1000, req: 20000, title: "Salary Level 2", desc: "ደረጃ A እና B ቡድኖች በአጠቃላይ 20,000 ETB ሲያስገቡ" },
@@ -962,6 +962,7 @@
                     lastYieldPayoutDate: "",
                     spinAttempts: 0,
                     invitedCount: 0,
+                    weeklyReferralCount: 0, // Weekly tracking initialized
                     salariesClaimed: {
                         salary1: false,
                         salary2: false,
@@ -1008,7 +1009,11 @@
 
                 if (parentUser && parentPhone) {
                     const updatedCount = (parentUser.invitedCount || 0) + 1;
-                    await update(ref(db, `users/${parentPhone}`), { invitedCount: updatedCount });
+                    const updatedWeeklyCount = (parentUser.weeklyReferralCount || 0) + 1; // Increment weekly invite
+                    await update(ref(db, `users/${parentPhone}`), { 
+                        invitedCount: updatedCount,
+                        weeklyReferralCount: updatedWeeklyCount
+                    });
 
                     const regDate = new Date().toISOString().split('T')[0];
                     await set(ref(db, `team/${parentPhone}/${childPhone}`), {
@@ -1211,17 +1216,12 @@
         }
 
         // Helper function to process instant deposit commissions (8%, 2%, 1% for levels A, B, C)
-        // Modified to strictly check for Active Package membership (activePackageId > 0)
-        // Also modified to calculate the deposit commission ONLY ONCE (First deposit only), preventing duplicate commission calculations upon Package Upgrade.
-        // Implemented Server-Side runTransaction on commissionPaid field to completely block multiple devices/listeners (such as client app + admin panel) from doubling the values!
         async function processDepositCommissions(transactions) {
             if (!transactions) return;
             
             for (let txId in transactions) {
                 const tx = transactions[txId];
                 
-                // የደህንነት ማጣሪያ፦ የተቀማጭ ገንዘቡ (deposit) ግዴታ በአድሚን/በባለሙያ 'approved' መደረጉ ሲረጋገጥ ብቻ ነው ወደ ጋባዥ የቡድን የተቀማጭ መጠን የሚደመረው።
-                // 'pending' (በመጠባበቅ ላይ ያለ) ወይም 'rejected' የሆኑ የሃሰት ሙከራዎች በፍጹም እዚህ ጋር አይፈቀዱም!
                 if (tx.type === 'deposit' && tx.status === 'approved' && !tx.commissionPaid) {
                     // Session-based memory check
                     if (processedTxIds.has(txId)) continue;
@@ -1364,8 +1364,6 @@
         }
 
         // Automated background yield processor & Dynamic daily commissions (Runs on app refresh/open)
-        // Modified to strictly verify package membership for commission distribution
-        // Enforces exact 24hr completion before adding to balance
         async function checkAndProcessAutoYield() {
             if (!userData || !userData.activePackageId || userData.activePackageId === 0) return;
 
@@ -1555,7 +1553,7 @@
             const ftRef = ftRefRaw.replace(/\s+/g, '').toUpperCase();
 
             try {
-                // [አዲስ ማሻሻያ] ደንበኞች ያልጸደቀ (Pending) የክፍያ ጥያቄ እያለ በድጋሚ deposit እንዳያደርጉ መከልከል
+                // ደንበኞች ያልጸደቀ (Pending) የክፍያ ጥያቄ እያለ በድጋሚ deposit እንዳያደርጉ መከልከል
                 const txRef = ref(db, `transactions/${currentPhone}`);
                 const txSnapshot = await get(txRef);
                 if (txSnapshot.exists()) {
@@ -1677,7 +1675,7 @@
             }
         };
 
-        // Sunday code claim constraints
+        // Sunday code claim constraints - Sychronized with Admin Control Panel logic
         window.claimBonusCode = async function() {
             const code = document.getElementById('bonus-code-input').value.trim();
             if (!code) {
@@ -1691,33 +1689,82 @@
                 return;
             }
 
-            if (userData.activePackageId === 0) {
-                alert("እርስዎ የ Intern አባል በመሆንዎ ምክንያት ይህ ቦነስ አይፈቀድልዎትም። የ Package አባል መሆን አለብዎት!");
-                return;
-            }
-
-            if ((userData.invitedCount || 0) < 1) {
-                alert("በዚህ ሳምንት ውስጥ ቢያንስ አንድ አዲስ አባል ስላልጋበዙ እድሉ አልተፈቀደልዎትም!");
-                return;
-            }
-
             try {
-                const currentBal = parseFloat(userData.balance || 0);
-                await update(ref(db, `users/${currentPhone}`), { balance: currentBal + 50.00 });
+                // 1. Get the current active bonus code from database
+                const bonusCodeSnap = await get(ref(db, 'appConfig/bonusCode'));
+                if (!bonusCodeSnap.exists()) {
+                    alert("በአሁኑ ሰዓት ምንም አይነት የቦነስ ኮድ አልነቃም!");
+                    return;
+                }
+                const activeBonusCode = bonusCodeSnap.val();
+
+                if (code.toUpperCase() !== activeBonusCode.toUpperCase()) {
+                    alert("ያስገቡት የቦነስ ኮድ የተሳሳተ ነው!");
+                    return;
+                }
+
+                // 2. Fetch latest user data to prevent stale states
+                const userSnap = await get(ref(db, `users/${currentPhone}`));
+                if (!userSnap.exists()) {
+                    alert("የተጠቃሚ መረጃ ማግኘት አልተቻለም!");
+                    return;
+                }
+                const u = userSnap.val();
+
+                // 3. Verify Package Level (Must be Package 1 or above)
+                const packageId = parseInt(u.activePackageId || 0);
+                if (packageId < 1) {
+                    alert("ቦነስ ለመውሰድ ቢያንስ የ Package 1 ወይም ከዚያ በላይ አባል መሆን አለብዎት!");
+                    return;
+                }
+
+                // 4. Verify Weekly Referrals (weeklyReferralCount >= 1)
+                const weeklyInvites = parseInt(u.weeklyReferralCount || 0);
+                if (weeklyInvites < 1) {
+                    alert("ከእሑድ በፊት ባለፉት ቀናት ቢያንስ አንድ ሰው ስላልጋበዙ የቦነስ እድሉን ማግኘት አይችሉም!");
+                    return;
+                }
+
+                // 5. Verify if already claimed today
+                const yyyy = today.getFullYear();
+                let mm = today.getMonth() + 1; 
+                let dd = today.getDate();
+                if (dd < 10) dd = '0' + dd;
+                if (mm < 10) mm = '0' + mm;
+                const todayStr = `${yyyy}-${mm}-${dd}`;
+
+                if (u.lastBonusClaimedDate === todayStr) {
+                    alert("በቀጣይ እሑድ አዲስ አባል በመጋበዝ የቦነስ እድሉን ይጠቀሙ የዛሬን ወስደዋል");
+                    return;
+                }
+
+                // 6. Success! Give 50 ETB
+                const currentBal = parseFloat(u.balance || 0);
+                const bonusAmount = 50.00;
+                const newBalance = currentBal + bonusAmount;
+
+                const updates = {};
+                updates[`users/${currentPhone}/balance`] = newBalance;
+                updates[`users/${currentPhone}/lastBonusClaimedDate`] = todayStr;
 
                 const txRef = ref(db, `transactions/${currentPhone}`);
-                await push(txRef, {
+                const txId = "tx_bonus_" + Date.now();
+                updates[`transactions/${currentPhone}/${txId}`] = {
                     type: 'commission',
-                    amount: 50.00,
-                    date: new Date().toISOString().replace('T', ' ').slice(0, 19),
+                    amount: bonusAmount,
+                    date: today.toISOString().replace('T', ' ').slice(0, 19),
                     status: 'approved',
-                    remark: `እሁድ የኮድ ቦነስ (Bonus code claim)`
-                });
+                    remark: `እሑድ ቦነስ - ${activeBonusCode}`
+                };
 
-                alert("እንኳን ደስ አሎት! የ 50 ETB እሁድ ቦነስ ወደ ሂሳብዎ ተደምሯል።");
+                await update(ref(db), updates);
+
+                alert("እንኳን ደስ አሎት! የ 50 ETB እሑድ ቦነስ በተሳካ ሁኔታ ወደ አካውንትዎ ገብቷል።");
                 document.getElementById('bonus-code-input').value = "";
+                
             } catch (err) {
-                alert("ስህተት ተከስቷል።");
+                console.error(err);
+                alert("ስህተት ተከስቷል። እባክዎ እንደገና ይሞክሩ!");
             }
         };
 
@@ -1919,7 +1966,6 @@
         };
 
         // Render dynamic Level structural lists
-        // Modified to calculate Actual Deposit and Daily Trading commissions from real transaction records
         function renderTeamTab() {
             const teamRef = ref(db, `team/${currentPhone}`);
             get(teamRef).then(async (snapshot) => {
@@ -1969,7 +2015,6 @@
                         countC++;
                         if (hasPackage) pkgC++;
                         listC.push(cleanMember);
-                        // የ 'C' ቡድን አባላት ተቀማጭ በቡድን የደመወዝ ገደብ ስሌት (totalABDeposits) ውስጥ እንዳይደመር ተወግዷል
                     }
                 });
 
@@ -2034,7 +2079,6 @@
         }
 
         // Render target thresholds for Salary
-        // [ማሻሻያ] የ 'C' ቡድን ተቀማጭ ተቀንሶ የደረጃ A እና B አባላት የጸደቀ ተቀማጭ ብቻ (totalAB) በስራ ላይ እንዲውል ተደርጓል
         function renderSalariesFeature(totalABC, totalAB) {
             const container = document.getElementById('salary-cards-list');
             container.innerHTML = "";
@@ -2042,7 +2086,6 @@
             salariesList.forEach(sal => {
                 const isClaimed = userData.salariesClaimed && userData.salariesClaimed[`salary${sal.id}`];
                 
-                // ለሁሉም የደመወዝ ደረጃዎች የ A እና B አባላት ድምር ብቻ (totalAB) ጥቅም ላይ ይውላል
                 let currentProgress = totalAB; 
                 const progressPct = Math.min(100, (currentProgress / sal.req) * 100);
                 const canClaim = currentProgress >= sal.req && !isClaimed;
@@ -2080,9 +2123,6 @@
         }
 
         // Claim salary logic directly updating balance
-        // Modified to strictly require Package Membership (activePackageId > 0)
-        // Corrected Firebase syntax multi-path updates (ref(db), updates) to fix the Claim button error.
-        // Hard-locked with pre-verification check to avoid double commission logging
         window.claimSalary = async function(id, amount) {
             if (!userData.activePackageId || userData.activePackageId === 0) {
                 alert("ስህተት፡ የደመወዝ ክፍያ ለመቀበል መጀመሪያ የ Package አባል መሆን አለብዎት!");
@@ -2286,7 +2326,6 @@
                     let sign = "+";
                     let statusLabel = "";
                     
-                    // Enforce custom labels explicitly: Deposit Approved -> Recharged, Withdraw Approved -> Successful
                     if (tx.status === 'pending') {
                         statusLabel = 'Pending (በመጠባበቅ ላይ)';
                     } else if (tx.status === 'approved') {
@@ -2295,7 +2334,7 @@
                         } else if (tx.type === 'withdraw') {
                             statusLabel = 'Successful';
                         } else {
-                            statusLabel = 'Approved'; // Commissions avoid registering 'Recharged / Successful'
+                            statusLabel = 'Approved';
                         }
                     } else {
                         statusLabel = 'Rejected';
@@ -2318,6 +2357,10 @@
                     let displayRemark = tx.remark || 'የተጠናቀቀ';
                     if (tx.type === 'withdraw') {
                         displayRemark = displayRemark.replace(/\d+/g, '****');
+                        // በወጪ ታሪክ ውስጥ የሚታየውን የደንበኛ ስም ለመደበቅ (ከ " - " በኋላ ያለውን ስም **** ማድረግ)
+                        if (displayRemark.includes(" - ")) {
+                            displayRemark = displayRemark.split(" - ")[0] + " - ****";
+                        }
                     }
 
                     container.innerHTML += `
@@ -2387,3 +2430,4 @@
     </script>
 </body>
 </html>
+
