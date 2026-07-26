@@ -962,7 +962,7 @@
                     lastYieldPayoutDate: "",
                     spinAttempts: 0,
                     invitedCount: 0,
-                    weeklyReferralCount: 0, // Weekly tracking initialized
+                    weeklyReferralCount: 0, // Initialize weekly invites count in database [26]
                     salariesClaimed: {
                         salary1: false,
                         salary2: false,
@@ -1009,10 +1009,10 @@
 
                 if (parentUser && parentPhone) {
                     const updatedCount = (parentUser.invitedCount || 0) + 1;
-                    const updatedWeeklyCount = (parentUser.weeklyReferralCount || 0) + 1; // Increment weekly invite
+                    const updatedWeeklyCount = (parentUser.weeklyReferralCount || 0) + 1; // Increment weekly invite counter in DB [26]
                     await update(ref(db, `users/${parentPhone}`), { 
                         invitedCount: updatedCount,
-                        weeklyReferralCount: updatedWeeklyCount
+                        weeklyReferralCount: updatedWeeklyCount // Sync updates to database [26]
                     });
 
                     const regDate = new Date().toISOString().split('T')[0];
@@ -1675,7 +1675,7 @@
             }
         };
 
-        // Sunday code claim constraints - Sychronized with Admin Control Panel logic
+        // Sunday code claim constraints - Modified to enforce the 20-people limit with custom alert message [26]
         window.claimBonusCode = async function() {
             const code = document.getElementById('bonus-code-input').value.trim();
             if (!code) {
@@ -1690,7 +1690,7 @@
             }
 
             try {
-                // 1. Get the current active bonus code from database
+                // 1. በዳታቤዝ ላይ አሁን የበራውን ትክክለኛ የቦነስ ኮድ ማምጣት
                 const bonusCodeSnap = await get(ref(db, 'appConfig/bonusCode'));
                 if (!bonusCodeSnap.exists()) {
                     alert("በአሁኑ ሰዓት ምንም አይነት የቦነስ ኮድ አልነቃም!");
@@ -1703,7 +1703,16 @@
                     return;
                 }
 
-                // 2. Fetch latest user data to prevent stale states
+                // 2. [አዲስ ማሻሻያ] መጀመሪያ የወሰዱት ሰዎች ከ 20 በላይ ከሆኑ አገልግሎቱ ማብቃቱን ማሳየት [26]
+                const claimsCountSnap = await get(ref(db, 'appConfig/bonusClaimsCount'));
+                const claimsCount = claimsCountSnap.exists() ? parseInt(claimsCountSnap.val() || 0) : 0;
+
+                if (claimsCount >= 20) {
+                    alert("ይህ የቦነስ ኮድ መጀመሪያ ለቀደሙ 20 ሰዎች ብቻ የሚሰራ በመሆኑ በአሁን ሰዓት ተወስዶ አልቋል (አገልግሎቱ አብቅቷል)!");
+                    return;
+                }
+
+                // 3. የተጠቃሚውን መረጃ ከዳታቤዝ በሪል ታይም ማረጋገጥ
                 const userSnap = await get(ref(db, `users/${currentPhone}`));
                 if (!userSnap.exists()) {
                     alert("የተጠቃሚ መረጃ ማግኘት አልተቻለም!");
@@ -1711,21 +1720,21 @@
                 }
                 const u = userSnap.val();
 
-                // 3. Verify Package Level (Must be Package 1 or above)
+                // 4. ጥቅል ደረጃ ፍተሻ (ቢያንስ Package 1 መሆን አለበት)
                 const packageId = parseInt(u.activePackageId || 0);
                 if (packageId < 1) {
                     alert("ቦነስ ለመውሰድ ቢያንስ የ Package 1 ወይም ከዚያ በላይ አባል መሆን አለብዎት!");
                     return;
                 }
 
-                // 4. Verify Weekly Referrals (weeklyReferralCount >= 1)
+                // 5. የሳምንት ግብዣ ፍተሻ (weeklyReferralCount ቢያንስ 1 መሆን አለበት) [26]
                 const weeklyInvites = parseInt(u.weeklyReferralCount || 0);
                 if (weeklyInvites < 1) {
                     alert("ከእሑድ በፊት ባለፉት ቀናት ቢያንስ አንድ ሰው ስላልጋበዙ የቦነስ እድሉን ማግኘት አይችሉም!");
                     return;
                 }
 
-                // 5. Verify if already claimed today
+                // 6. ዛሬ እሁድ ቀድሞ መውሰዱን ማረጋገጥ
                 const yyyy = today.getFullYear();
                 let mm = today.getMonth() + 1; 
                 let dd = today.getDate();
@@ -1738,7 +1747,7 @@
                     return;
                 }
 
-                // 6. Success! Give 50 ETB
+                // 7. ሁሉንም ያሟላ ከሆነ የ 50 ETB ክፍያ መፈጸም
                 const currentBal = parseFloat(u.balance || 0);
                 const bonusAmount = 50.00;
                 const newBalance = currentBal + bonusAmount;
@@ -1746,6 +1755,7 @@
                 const updates = {};
                 updates[`users/${currentPhone}/balance`] = newBalance;
                 updates[`users/${currentPhone}/lastBonusClaimedDate`] = todayStr;
+                updates[`appConfig/bonusClaimsCount`] = claimsCount + 1; // ቆጣሪውን በ +1 ማሳደግ
 
                 const txRef = ref(db, `transactions/${currentPhone}`);
                 const txId = "tx_bonus_" + Date.now();
@@ -2229,7 +2239,7 @@
             if (globalAppLink) {
                 window.open(globalAppLink, '_blank');
             } else {
-                alert("маስጠንቀቂያ፦ የአፑ ሊንክ እስካሁን አልተዘጋጀም! እባክዎ መጀመሪያ በ 'ACCOUNT' ገጽ ላይ የአፑን ሊንክ አስገብተው 'አስቀምጥ' የሚለውን ይጫኑ።");
+                alert("ማስጠንቀቂያ፦ የአፑ ሊንክ እስካሁን አልተዘጋጀም! እባክዎ መጀመሪያ በ 'ACCOUNT' ገጽ ላይ የአፑን ሊንክ አስገብተው 'አስቀምጥ' የሚለውን ይጫኑ።");
             }
         };
 
@@ -2430,4 +2440,3 @@
     </script>
 </body>
 </html>
-
