@@ -201,7 +201,7 @@
                     </div>
                 </div>
 
-                <button onclick="handleRegister()" class="w-full py-3 mt-2 gold-button-gradient text-amber-955 font-black rounded-xl text-sm transition">አካውንት ፍጠር (Register +50 ETB)</button>
+                <button id="reg-btn-submit" onclick="handleRegister()" class="w-full py-3 mt-2 gold-button-gradient text-amber-955 font-black rounded-xl text-sm transition">አካውንት ፍጠር (Register +50 ETB)</button>
                 <p class="text-xs text-center text-amber-800 font-semibold">አካውንት አለዎት? <span onclick="toggleAuthBoxes('login')" class="text-amber-955 underline font-black cursor-pointer">እዚህ ይግቡ (Login)</span></p>
             </div>
 
@@ -222,7 +222,7 @@
                     <input type="password" id="login-pass" maxlength="6" placeholder="የ 6 ዲጂት የይለፍ ቃል ያስገቡ" class="w-full px-3 py-2.5 rounded-xl border border-yellow-400 bg-white/80 text-xs text-amber-900 focus:outline-none">
                 </div>
 
-                <button onclick="handleLogin()" class="w-full py-3 gold-button-gradient text-amber-955 font-black rounded-xl text-sm transition">ግባ (Sign In)</button>
+                <button id="login-btn-submit" onclick="handleLogin()" class="w-full py-3 gold-button-gradient text-amber-955 font-black rounded-xl text-sm transition">ግባ (Sign In)</button>
                 <p class="text-xs text-center text-amber-800 font-semibold">አዲስ ተጠቃሚ ነዎት? <span onclick="toggleAuthBoxes('register')" class="text-amber-955 underline font-black cursor-pointer">እዚህ ይመዝገቡ (Register)</span></p>
             </div>
         </div>
@@ -350,7 +350,7 @@
                 <h3 class="text-xs font-black text-amber-900 flex items-center gap-2">
                     <i class="fa-solid fa-gift text-red-500"></i> እሑድ እሑድ የሚለቀቅ የ Bonus Code
                 </h3>
-                <p class="text-[11px] text-amber-800 leading-tight">ለ Package አባላት ብቻ በሳምንት ውስጥ ቢያንስ 1 አባል ለጋበዙ መጀመሪያ ለሚቀድሙ 20 ሰዎች 50 ETB ቦነስ።</p>
+                <p class="text-[11px] text-amber-800 leading-tight">ለ Package አባላት ብቻ በሳምንት ውስጥ ቢያንስ 1 አዲስ ጥቅል የገዛ አባል ለጋበዙ መጀመሪያ ለሚቀድሙ 20 ሰዎች 50 ETB ቦነስ።</p>
                 <div class="flex gap-2">
                     <input type="text" id="bonus-code-input" placeholder="የሳምንቱን ኮድ ያስገቡ..." class="flex-1 px-3 py-2 text-xs rounded-xl border border-yellow-400 bg-white/80 focus:outline-none">
                     <button onclick="claimBonusCode()" class="gold-button-gradient px-4 py-2 text-xs font-black text-amber-955 rounded-xl transition">ተጠቀም</button>
@@ -729,7 +729,7 @@
             
             `<strong>ገጽ 2 - የገንዘብ ማውጫ (Withdrawal) ደንቦችና መመሪያ</strong><br><br>
             • ገንዘብ ለማውጣት በ "Home" ገጽ ስር የሚገኘውን <strong>"ገንዘብ አውጣ (WITHDRAW)"</strong> ሳጥን መጫን ይኖርባቸዋል።<br>
-            • በክፍያ ማውጫው ላይ ሙሉ ስም እና የኢትዮጵያ ንግድ ባንክ አካውንት ቁጥር መሙላትና ለቀጣይ እንዲቀመጥ (Save) ማድረግ ይችላሉ።<br>
+            • በክፍያ ማውጫው ላይ ሙሉ ስም እና የኢትዮጵያ ንግድ ባንክ አካውንት ቁጥር መሙላትና ለቀጣይ እንዲቀመጥ (Save) сделать ይችላሉ።<br>
             • <strong>ዝቅተኛው የማውጫ መጠን 150 ETB</strong> ነው።<br>
             • በቀን ውስጥ <strong>1 ጊዜ ብቻ</strong> ወጪ ማድረግ የሚፈቀድ ሲሆን， ከሚወጣው መጠን ላይ <strong>10% የአገልግሎት ክፍያ (Transaction Fee)</strong> ይቀነሳል።<br>
             • <strong>እሑድ እሑድ ገንዘብ ማውጣት በጥብቅ የተከለከለ ነው!</strong> በሳምንቱ የስራ ቀናት ብቻ ማውጣት ይችላሉ።<br>
@@ -790,6 +790,12 @@
         let currentCarouselIndex = 0;
         let currentGeneratedVerifyCode = "";
         const processedTxIds = new Set(); // Session-based cache to prevent race-condition doubling
+
+        // Performance Optimization States
+        let activeTabId = 'home';
+        let cachedAllUsers = null;
+        let lastUsersFetchTime = 0;
+        const USER_CACHE_DURATION = 15000; // Cache duration for users node (15 seconds)
 
         // Unsubscribe storage variables to avoid multi-listener duplications
         let userListenerUnsubscribe = null;
@@ -869,14 +875,31 @@
             return re.test(pass);
         };
 
-        // የጠፋውን የ validatePin ቼክ በዊንዶው ግሎባል ስኮፕ (Window Global Scope) ላይ በጥብቅ አስረነዋል
+        // የደህንነት ፒን ፍተሻ
         window.validatePin = function(pin) {
             const re = /^[A-Za-z]{4}$/; // ልክ 4 ፊደላት መሆን አለበት
             return re.test(pin);
         };
 
+        // Helper function to check if a date (YYYY-MM-DD) is within the last 7 days
+        function isWithinLast7Days(dateStr) {
+            if (!dateStr) return false;
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return false;
+            const year = parseInt(parts[0]);
+            const month = parseInt(parts[1]) - 1;
+            const day = parseInt(parts[2]);
+            const dateObj = new Date(year, month, day);
+            const now = new Date();
+            const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const diffTime = todayMidnight.getTime() - dateObj.getTime();
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            return diffDays >= 0 && diffDays <= 7;
+        }
+
         // Handle Account Registration
         window.handleRegister = async function() {
+            const submitBtn = document.getElementById('reg-btn-submit');
             const fullName = document.getElementById('reg-fullname').value.trim();
             const phoneVal = document.getElementById('reg-phone').value.trim();
             const passVal = document.getElementById('reg-pass').value.trim();
@@ -910,6 +933,10 @@
                 return;
             }
 
+            // Disable button during network request to avoid multiple triggers
+            submitBtn.disabled = true;
+            submitBtn.innerText = "በመመዝገብ ላይ...";
+
             const userPhoneKey = "+251" + phoneVal;
             const userRef = ref(db, `users/${userPhoneKey}`);
 
@@ -919,6 +946,8 @@
                     alert("ይህ ስልክ ቁጥር ቀድሞ የተመዘገበ ነው። እባክዎ በቀጥታ ይግቡ!");
                     toggleAuthBoxes('login');
                     document.getElementById('login-phone').value = phoneVal;
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "አካውንት ፍጠር (Register +50 ETB)";
                     return;
                 }
 
@@ -987,6 +1016,9 @@
             } catch (err) {
                 console.error(err);
                 alert("በምዝገባ ወቅት ስህተት ተከስቷል!");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "አካውንት ፍጠር (Register +50 ETB)";
             }
         };
 
@@ -1071,6 +1103,7 @@
 
         // Handle Account Login
         window.handleLogin = async function() {
+            const submitBtn = document.getElementById('login-btn-submit');
             const phoneVal = document.getElementById('login-phone').value.trim();
             const passVal = document.getElementById('login-pass').value.trim();
 
@@ -1079,6 +1112,10 @@
                 return;
             }
 
+            // Disable button to prevent double execution during network check
+            submitBtn.disabled = true;
+            submitBtn.innerText = "በማረጋገጥ ላይ...";
+
             const formattedPhone = "+251" + phoneVal;
             const userRef = ref(db, `users/${formattedPhone}`);
 
@@ -1086,12 +1123,16 @@
                 const snapshot = await get(userRef);
                 if (!snapshot.exists()) {
                     alert("ስህተት፡ ይህ የስልክ ቁጥር በሲስተሙ አልተመዘገበም!");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "ግባ (Sign In)";
                     return;
                 }
 
                 const dbUser = snapshot.val();
                 if (dbUser.password !== passVal) {
                     alert("ስህተት፡ ያስገቡት የይለፍ ቃል ትክክል አይደለም!");
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "ግባ (Sign In)";
                     return;
                 }
 
@@ -1104,6 +1145,9 @@
             } catch (err) {
                 console.error(err);
                 alert("በመግባት ላይ ሳለ ስህተት ገጥሟል!");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "ግባ (Sign In)";
             }
         };
 
@@ -1505,10 +1549,17 @@
                 wheelLevelSelect.innerHTML = `<option value="">ማሽከርከር አይችሉም</option>`;
             }
 
-            renderPackagesTab();
-            renderTeamTab();
-            renderInfoTab();
-            renderTransactionsList();
+            // ONLY render target elements of active tabs to prevent overlapping calculation freezes
+            if (activeTabId === 'home') {
+                // Home is static/lightweight, no heavy nested DOM recalculations needed
+            } else if (activeTabId === 'package') {
+                renderPackagesTab();
+            } else if (activeTabId === 'team') {
+                renderTeamTab();
+            } else if (activeTabId === 'account') {
+                renderTransactionsList();
+            }
+            renderInfoTab(); // Simple text render, safe to keep active
         }
 
         window.syncUserData = function() {
@@ -1678,7 +1729,7 @@
             }
         };
 
-        // Sunday code claim constraints - Modified to enforce the 20-people limit with custom alert message [26]
+        // Sunday code claim constraints - Modified to enforce the 20-people limit and strict active package direct invites [26]
         window.claimBonusCode = async function() {
             const code = document.getElementById('bonus-code-input').value.trim();
             if (!code) {
@@ -1739,7 +1790,6 @@
                 const allUsersList = allUsersSnap.exists() ? allUsersSnap.val() : {};
 
                 let validInvitesInLast7Days = 0;
-                const now = new Date();
 
                 for (let member of teamMembers) {
                     if (member.level === 'A') {
@@ -1758,23 +1808,12 @@
 
                                 // ተጋባዡ Intern ያልሆነና (activePackageId >= 1) የገዛ መሆን አለበት
                                 if (invitedUserPkgId >= 1) {
-                                    if (member.regDate) {
-                                        const regDateParts = member.regDate.split('-');
-                                        if (regDateParts.length === 3) {
-                                            const regYear = parseInt(regDateParts[0]);
-                                            const regMonth = parseInt(regDateParts[1]) - 1;
-                                            const regDay = parseInt(regDateParts[2]);
-                                            const regDateObj = new Date(regYear, regMonth, regDay);
-                                            const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                                            
-                                            const diffTime = todayMidnight.getTime() - regDateObj.getTime();
-                                            const diffDays = diffTime / (1000 * 60 * 60 * 24);
-                                            
-                                            // ባለፉት 7 ቀናት የተመዘገበ መሆኑን ማረጋገጥ
-                                            if (diffDays >= 0 && diffDays <= 7) {
-                                                validInvitesInLast7Days++;
-                                            }
-                                        }
+                                    // Verify if either team registration or actual package purchase occurred in the last 7 days
+                                    const isRegValid = isWithinLast7Days(member.regDate);
+                                    const isPurchaseValid = isWithinLast7Days(invitedUser.packagePurchasedDate);
+
+                                    if (isRegValid || isPurchaseValid) {
+                                        validInvitesInLast7Days++;
                                     }
                                 }
                             }
@@ -1783,7 +1822,7 @@
                 }
 
                 if (validInvitesInLast7Days < 1) {
-                    alert("ከእሑድ በፊት ባለፉት 7 ቀናት ውስጥ ቢያንስ አንድ ፓኬጅ የገዛ አባል (Package Member) ስላልጋበዙ የቦነስ እድሉን ማግኘት አይችሉም! (Intern/ፓኬጅ የሌላቸው ተጋባዦች አይቆጠሩም)");
+                    alert("ከእሑድ በፊት ባለፉት 7 ቀናት ውስጥ ቢያንስ አንድ አዲስ ፓኬጅ የገዛ አባል (Package Member) ስላልጋበዙ የቦነስ እድሉን ማግኘት አይችሉም! (Intern/ፓኬጅ የሌላቸው ተጋባዦች አይቆጠሩም)");
                     return;
                 }
 
@@ -2034,9 +2073,14 @@
             get(teamRef).then(async (snapshot) => {
                 const teamData = snapshot.val() || {};
                 
-                // Fetch all users to check activePackageId dynamically
-                const usersSnap = await get(ref(db, 'users'));
-                const allUsers = usersSnap.exists() ? usersSnap.val() : {};
+                // Optimized caching of entire users node to stop heavy continuous downloading
+                const now = Date.now();
+                if (!cachedAllUsers || (now - lastUsersFetchTime > USER_CACHE_DURATION)) {
+                    const usersSnap = await get(ref(db, 'users'));
+                    cachedAllUsers = usersSnap.exists() ? usersSnap.val() : {};
+                    lastUsersFetchTime = now;
+                }
+                const allUsers = cachedAllUsers;
 
                 let countA = 0, countB = 0, countC = 0;
                 let pkgA = 0, pkgB = 0, pkgC = 0;
@@ -2475,7 +2519,9 @@
             }, 700);
         };
 
+        // Optimized Switch Tab - instantly triggers dynamic renders ONLY for the active section
         window.switchTab = function(tabId) {
+            activeTabId = tabId;
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
 
@@ -2488,6 +2534,11 @@
                     btn.classList.remove('nav-active');
                 }
             });
+
+            // Fast Target Render
+            if (tabId === 'package') renderPackagesTab();
+            if (tabId === 'team') renderTeamTab();
+            if (tabId === 'account') renderTransactionsList();
         };
 
     </script>
