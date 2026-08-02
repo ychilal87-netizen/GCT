@@ -490,7 +490,7 @@
                 
                 <!-- 2ኛ ማሻሻያ፡ የአፕ ሊንክ ማስቀመጫ ክፍል ከዋናው አፕ እንዲደበቅ 'hidden' ክላስ ተጨምሮበታል ነገር ግን ኮዱ አልተቀነሰም -->
                 <div id="admin-app-link-wrapper" class="hidden">
-                    <p class="text-[11px] text-amber-800 leading-tight">የአፑን ሊንክ ማስገቢያ ኮድ እዚህ ያዘጋጁ। ማስቀመጥ እና መልሰው ማስተካከል ይችላሉ።</p>
+                    <p class="text-[11px] text-amber-800 leading-tight">የአፑን ሊንክ ማስገቢያ ኮድ እዚህ ያዘጋጁ። ማስቀመጥ እና መልሰው ማስተካከል ይችላሉ።</p>
                     <div class="flex gap-2 mt-2">
                         <input type="text" id="app-config-link" placeholder="አፕሊኬሽን ሊንክ ያስገቡ..." class="flex-1 px-3 py-2 text-xs rounded-xl border border-yellow-400 bg-white/80 focus:outline-none">
                         <button onclick="saveAppConfigLink()" class="gold-button-gradient px-4 py-2 text-xs font-black text-amber-955 rounded-xl transition">አስቀምጥ</button>
@@ -740,7 +740,7 @@
             <strong>1. የቀን ገቢ (Daily Package Income)፦</strong><br>
             • Package 1 (1000 ETB) -> በቀን 30 ETB | Package 2 (2000 ETB) -> በቀን 60 ETB | Package 3 (4000 ETB) -> በቀን 120 ETB | Package 4 (8000 ETB) -> በቀን 240 ETB | Package 5 (15000 ETB) -> በቀን 450 ETB | Package 6 (30000 ETB) -> በቀን 900 ETB ትርፍ ይሰጣል።<br>
             • Package 7፣ 8፣ 9፣ 10 ለጊዜው ዝግ (Locked) ሆነው ይቀመጣሉ።<br>
-            • በአንድ አካውንት 1 ፓኬጅ ብቻ ማስተዳደር ይቻላል፤ ነገር ግን በማንኛውም ጊዜ ጥቅልዎን ማሳደግ ይችላሉ። ጥቅል ሲያሳድጉ የቀድሞው ጥቅል ወደ "Buy" ይመለሳል። እያንዳንዱ ጥቅል ለ 365 ቀናት የሚሰራ ሲሆን በየ 24 ሰዓቱ በቀጥታ ወደ ባላንስዎ ይደመራል።<br><br>
+            • በአንድ አካውንት 1 ፓኬጅ ብቻ ማስተዳደር ይቻላል； ነገር ግን በማንኛውም ጊዜ ጥቅልዎን ማሳደግ ይችላሉ። ጥቅል ሲያሳድጉ የቀድሞው ጥቅል ወደ "Buy" ይመለሳል። እያንዳንዱ ጥቅል ለ 365 ቀናት የሚሰራ ሲሆን በየ 24 ሰዓቱ በቀጥታ ወደ ባላንስዎ ይደመራል።<br><br>
             <strong>2. የቡድን ኮሚሽን (Team Commissions)፦</strong><br>
             • <strong>የተቀማጭ (Deposit) ኮሚሽን፦</strong> ደረጃ A (8%) | ደረጃ B (2%) | ደረጃ C (1%) ከተጋባዦች የተቀማጭ መጠን ላይ በቀጥታ ወደ ባላንስዎ ወዲያውኑ ይደመራል።<br>
             • <strong>የቀን ገቢ (Daily Trading) ኮሚሽን፦</strong> ደረጃ A (2%) | ደረጃ B (1%) | ደረጃ C (0.1%) ከተጋባዦች የቀን ገቢ ትርፍ ላይ በየቀኑ በራስ-ሰር ይደመራል።<br>
@@ -1303,7 +1303,7 @@
                             }
                         }
 
-                        // የተቀማጩ ትክክለኛነት ከተረጋገጠ በኋላ ብቻ በጋባዦች (A እና B) ቡድን የተቀማጭ ገደብ (team progress) ላይ ይደመራል። (C ቡድን ተቀንሷል)
+                        // የተቀማጩ ትክክኙነት ከተረጋገጠ በኋላ ብቻ በጋባዦች (A እና B) ቡድን የተቀማጭ ገደብ (team progress) ላይ ይደመራል። (C ቡድን ተቀንሷል)
                         for (let level of ['A', 'B']) {
                             const uplinePhone = uplines[level];
                             if (uplinePhone) {
@@ -1743,20 +1743,37 @@
 
                 for (let member of teamMembers) {
                     if (member.level === 'A') {
-                        const invitedPhone = member.phone;
-                        const invitedUser = allUsersList[invitedPhone];
-                        if (invitedUser) {
-                            const invitedUserPkgId = parseInt(invitedUser.activePackageId || 0);
-                            // ተጋባዡ Intern ያልሆነና (activePackageId >= 1) የገዛ መሆን አለበት
-                            if (invitedUserPkgId >= 1) {
-                                if (member.regDate) {
-                                    const regDate = new Date(member.regDate);
-                                    if (!isNaN(regDate.getTime())) {
-                                        const diffTime = now.getTime() - regDate.getTime();
-                                        const diffDays = diffTime / (1000 * 60 * 60 * 24);
-                                        // ባለፉት 7 ቀናት የተመዘገበ መሆኑን ማረጋገጥ
-                                        if (diffDays >= 0 && diffDays <= 7) {
-                                            validInvitesInLast7Days++;
+                        const invitedPhone = member.phone ? member.phone.trim().replace(/\s+/g, '') : "";
+                        if (invitedPhone) {
+                            // Normalize phone lookup key
+                            let invitedUser = allUsersList[invitedPhone];
+                            if (!invitedUser) {
+                                // Fallback lookup to prevent string formatting mismatch bypasses
+                                invitedUser = Object.values(allUsersList).find(usr => usr.phone && usr.phone.trim().replace(/\s+/g, '') === invitedPhone);
+                            }
+
+                            if (invitedUser) {
+                                let invitedUserPkgId = parseInt(invitedUser.activePackageId || 0);
+                                if (isNaN(invitedUserPkgId)) invitedUserPkgId = 0;
+
+                                // ተጋባዡ Intern ያልሆነና (activePackageId >= 1) የገዛ መሆን አለበት
+                                if (invitedUserPkgId >= 1) {
+                                    if (member.regDate) {
+                                        const regDateParts = member.regDate.split('-');
+                                        if (regDateParts.length === 3) {
+                                            const regYear = parseInt(regDateParts[0]);
+                                            const regMonth = parseInt(regDateParts[1]) - 1;
+                                            const regDay = parseInt(regDateParts[2]);
+                                            const regDateObj = new Date(regYear, regMonth, regDay);
+                                            const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                                            
+                                            const diffTime = todayMidnight.getTime() - regDateObj.getTime();
+                                            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+                                            
+                                            // ባለፉት 7 ቀናት የተመዘገበ መሆኑን ማረጋገጥ
+                                            if (diffDays >= 0 && diffDays <= 7) {
+                                                validInvitesInLast7Days++;
+                                            }
                                         }
                                     }
                                 }
