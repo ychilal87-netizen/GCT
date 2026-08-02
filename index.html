@@ -490,7 +490,7 @@
                 
                 <!-- 2ኛ ማሻሻያ፡ የአፕ ሊንክ ማስቀመጫ ክፍል ከዋናው አፕ እንዲደበቅ 'hidden' ክላስ ተጨምሮበታል ነገር ግን ኮዱ አልተቀነሰም -->
                 <div id="admin-app-link-wrapper" class="hidden">
-                    <p class="text-[11px] text-amber-800 leading-tight">የአፑን ሊንክ ማስገቢያ ኮድ እዚህ ያዘጋጁ። ማስቀመጥ እና መልሰው ማስተካከል ይችላሉ።</p>
+                    <p class="text-[11px] text-amber-800 leading-tight">የአፑን ሊንክ ማስገቢያ ኮድ እዚህ ያዘጋጁ। ማስቀመጥ እና መልሰው ማስተካከል ይችላሉ።</p>
                     <div class="flex gap-2 mt-2">
                         <input type="text" id="app-config-link" placeholder="አፕሊኬሽን ሊንክ ያስገቡ..." class="flex-1 px-3 py-2 text-xs rounded-xl border border-yellow-400 bg-white/80 focus:outline-none">
                         <button onclick="saveAppConfigLink()" class="gold-button-gradient px-4 py-2 text-xs font-black text-amber-955 rounded-xl transition">አስቀምጥ</button>
@@ -634,8 +634,8 @@
             </div>
 
             <div class="bg-yellow-100/50 p-3 rounded-2xl border border-yellow-300 text-[10px] text-amber-800 leading-tight space-y-1 font-bold">
-                <p>⚠️ አነስተኛ ማውጫ፡ <strong class="text-amber-950">150 ETB</strong></p>
-                <p>⚠️ የአገልግሎት ክፍያ (Fee)፦ <strong class="text-amber-950">10%</strong></p>
+                <p>⚠️ አነስተኛ ማውጫ፡ <strong class="text-amber-955">150 ETB</strong></p>
+                <p>⚠️ የአገልግሎት ክፍያ (Fee)፦ <strong class="text-amber-955">10%</strong></p>
                 <p>⚠️ ወጪ መውጣት የሚቻለው በቀን አንድ ጊዜ ብቻ ነው።</p>
                 <p>⚠️ <strong class="text-roseVibrant">እሁድ እሁድ ወጪ ማድረግ በጥብቅ የተከለከለ ነው!</strong></p>
             </div>
@@ -1044,7 +1044,7 @@
                                 depositAmt: 0
                             });
 
-                            if (grandParent.referredBy) {
+                            if (parentUser.referredBy) {
                                 let greatGrandParentPhone = null;
                                 for (let ph in usersList) {
                                     if (usersList[ph].id === grandParent.referredBy) {
@@ -1245,7 +1245,10 @@
                         processedTxIds.add(txId);
 
                         const depositAmt = parseFloat(tx.amount || 0);
-                        if (depositAmt <= 0) continue;
+                        const targetPkgId = parseInt(tx.packageId || 0);
+                        
+                        // [ሕግ ጥበቃ] ተጋባዡ Intern ከሆነ (ወይም ክፍያው ለፓኬጅ ካልሆነ) ምንም ኮሚሽን ለጋባዡ አይሰላም
+                        if (depositAmt <= 0 || targetPkgId < 1) continue;
 
                         const uplines = await getUplinesForUser(currentPhone);
 
@@ -1273,13 +1276,13 @@
                                     const commRate = rates[level];
                                     const commAmt = depositAmt * commRate;
 
-                                    // Update upline balance only if they are active package members (VIP > 0)
+                                    // Update upline balance only if they are active package members (VIP >= 1)
                                     const uplineUserSnap = await get(ref(db, `users/${uplinePhone}`));
                                     if (uplineUserSnap.exists()) {
                                         const uplineUser = uplineUserSnap.val();
                                         
-                                        // Constraint check: Upline must be package member to receive commission
-                                        if (uplineUser.activePackageId && uplineUser.activePackageId > 0) {
+                                        // [ሕግ ጥበቃ] ጋባዡ ራሱ Package የገዛ መሆን አለበት (activePackageId >= 1)
+                                        if (uplineUser.activePackageId && uplineUser.activePackageId >= 1) {
                                             const oldBal = parseFloat(uplineUser.balance || 0);
                                             const newBal = oldBal + commAmt;
                                             
@@ -1425,8 +1428,8 @@
                                 if (uplineSnap.exists()) {
                                     const uplineUser = uplineSnap.val();
                                     
-                                    // Constraint check: Upline must be package member to receive trading commission
-                                    if (uplineUser.activePackageId && uplineUser.activePackageId > 0) {
+                                    // [ሕግ ጥበቃ] ጋባዡ ራሱ Package የገዛ መሆን አለበት (activePackageId >= 1)
+                                    if (uplineUser.activePackageId && uplineUser.activePackageId >= 1) {
                                         const currentBal = parseFloat(uplineUser.balance || 0);
                                         const newBal = currentBal + totalCommAmount;
 
@@ -1727,10 +1730,43 @@
                     return;
                 }
 
-                // 5. የሳምንት ግብዣ ፍተሻ (weeklyReferralCount ቢያንስ 1 መሆን አለበት) [26]
-                const weeklyInvites = parseInt(u.weeklyReferralCount || 0);
-                if (weeklyInvites < 1) {
-                    alert("ከእሑድ በፊት ባለፉት ቀናት ቢያንስ አንድ ሰው ስላልጋበዙ የቦነስ እድሉን ማግኘት አይችሉም!");
+                // 5. [የተሻሻለ ጥብቅ ሕግ] የሳምንት ግብዣ ፍተሻ (በቀደሙት ሰባት ቀናት ውስጥ ቢያንስ 1 የ Package አባል የጋበዙ መሆን አለባቸው)
+                const teamSnap = await get(ref(db, `team/${currentPhone}`));
+                const teamData = teamSnap.exists() ? teamSnap.val() : {};
+                const teamMembers = Object.values(teamData);
+
+                const allUsersSnap = await get(ref(db, 'users'));
+                const allUsersList = allUsersSnap.exists() ? allUsersSnap.val() : {};
+
+                let validInvitesInLast7Days = 0;
+                const now = new Date();
+
+                for (let member of teamMembers) {
+                    if (member.level === 'A') {
+                        const invitedPhone = member.phone;
+                        const invitedUser = allUsersList[invitedPhone];
+                        if (invitedUser) {
+                            const invitedUserPkgId = parseInt(invitedUser.activePackageId || 0);
+                            // ተጋባዡ Intern ያልሆነና (activePackageId >= 1) የገዛ መሆን አለበት
+                            if (invitedUserPkgId >= 1) {
+                                if (member.regDate) {
+                                    const regDate = new Date(member.regDate);
+                                    if (!isNaN(regDate.getTime())) {
+                                        const diffTime = now.getTime() - regDate.getTime();
+                                        const diffDays = diffTime / (1000 * 60 * 60 * 24);
+                                        // ባለፉት 7 ቀናት የተመዘገበ መሆኑን ማረጋገጥ
+                                        if (diffDays >= 0 && diffDays <= 7) {
+                                            validInvitesInLast7Days++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (validInvitesInLast7Days < 1) {
+                    alert("ከእሑድ በፊት ባለፉት 7 ቀናት ውስጥ ቢያንስ አንድ ፓኬጅ የገዛ አባል (Package Member) ስላልጋበዙ የቦነስ እድሉን ማግኘት አይችሉም! (Intern/ፓኬጅ የሌላቸው ተጋባዦች አይቆጠሩም)");
                     return;
                 }
 
@@ -1828,7 +1864,7 @@
                         if (currentUser) {
                             let currentSpins = {};
                             if (typeof currentUser.spinAttempts === 'number') {
-                                currentSpins = { "1": currentUser.spinAttempts };
+                                 currentSpins = { "1": currentUser.spinAttempts };
                             } else if (typeof currentUser.spinAttempts === 'object' && currentUser.spinAttempts !== null) {
                                 currentSpins = { ...currentUser.spinAttempts };
                             }
@@ -1942,8 +1978,8 @@
                         const uplineRef = ref(db, `users/${userData.uplineA}`);
                         await runTransaction(uplineRef, (uplineData) => {
                             if (uplineData) {
-                                // Inviter receives spin only if they themselves own a package (activePackageId > 0)
-                                if (uplineData.activePackageId && uplineData.activePackageId > 0) {
+                                // [ሕግ ጥበቃ] ጋባዡ ራሱ Package የገዛ መሆን አለበት (activePackageId >= 1)
+                                if (uplineData.activePackageId && uplineData.activePackageId >= 1) {
                                     let spins = {};
                                     if (typeof uplineData.spinAttempts === 'number') {
                                          spins = { "1": uplineData.spinAttempts };
